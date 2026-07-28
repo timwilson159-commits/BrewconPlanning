@@ -178,6 +178,19 @@
   .brewrow .bn small{display:block;font-weight:700;color:#8a7f6d;font-size:11.5px}
   .brewrow .del{border:none;background:none;cursor:pointer;color:#c9bfae;font-size:15px;font-weight:800}
   .brewrow .del:hover{color:var(--event)}
+  .brewrow .edit{border:none;background:none;cursor:pointer;color:#b7ac9a;font-size:15px;font-weight:800;padding:0 2px}
+  .brewrow .edit:hover{color:var(--grape)}
+
+  /* collaborators */
+  .collabrow{display:flex;align-items:center;gap:11px;padding:9px 0;border-bottom:1px dashed #eadfca}
+  .collabrow:last-child{border-bottom:none}
+  .avatar{width:36px;height:36px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;
+    font-family:'Baloo 2',cursive;font-weight:800;color:#fff;font-size:15px;box-shadow:inset 0 -2px 0 rgba(0,0,0,.12)}
+  .collabrow .cn{flex:1;font-weight:800;font-size:14.5px;min-width:0}
+  .collabrow .cn small{display:block;font-weight:700;color:#8a7f6d;font-size:11.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .cbadge{background:var(--grape);color:#fff;font-family:'Baloo 2',cursive;font-weight:800;font-size:14px;
+    border-radius:999px;min-width:28px;height:28px;padding:0 9px;display:flex;align-items:center;justify-content:center;flex:none;
+    box-shadow:0 2px 0 rgba(0,0,0,.12)}
 
   /* ---------- Modal ---------- */
   .overlay{position:fixed;inset:0;background:rgba(43,36,64,.45);backdrop-filter:blur(2px);
@@ -251,9 +264,9 @@
         <button class="btn" style="background:var(--accent);color:#fff;box-shadow:0 4px 0 rgba(0,0,0,.15)" id="todoAdd">Add</button>
       </div>
       <div class="seg" id="catSeg">
-        <button data-cat="goal" class="">🎯 Goal</button>
-        <button data-cat="target" class="">📈 Target</button>
-        <button data-cat="task" class="on">🔧 Task</button>
+        <button data-cat="goal" class="on">🎯 Goal</button>
+        <button data-cat="target">📈 Target</button>
+        <button data-cat="task">🔧 Task</button>
       </div>
       <ul class="todo-list" id="todoList"><li class="todo" data-cat="task"><input type="checkbox" class="chk"><div class="txt">Order plastic glasses</div><span class="tag">task</span><button class="del" title="Delete">✕</button></li><li class="todo" data-cat="task"><input type="checkbox" class="chk"><div class="txt">Move voting system online</div><span class="tag">task</span><button class="del" title="Delete">✕</button></li><li class="todo" data-cat="task"><input type="checkbox" class="chk"><div class="txt">Troubleshoot voting system and awards</div><span class="tag">task</span><button class="del" title="Delete">✕</button></li><li class="todo" data-cat="task"><input type="checkbox" class="chk"><div class="txt">Make introduction slideshow</div><span class="tag">task</span><button class="del" title="Delete">✕</button></li><li class="todo" data-cat="task"><input type="checkbox" class="chk"><div class="txt">Organise prizes and sponsors</div><span class="tag">task</span><button class="del" title="Delete">✕</button></li></ul>
     </div>
@@ -263,6 +276,12 @@
       <div class="sub" id="brewCount">No brews planned yet.</div>
       <div id="brewList"></div>
     </div>
+
+    <div class="card">
+      <h3>🤝 Collaborators</h3>
+      <div class="sub" id="collabSub">No collab brews yet.</div>
+      <div id="collabList"></div>
+    </div>
   </div>
 </div>
 
@@ -270,7 +289,7 @@
 <div class="overlay" id="overlay">
   <div class="modal">
     <div class="modal-hd">
-      <h3 id="modalDate">Saturday, August 1, 2026</h3>
+      <h3 id="modalDate">Tuesday, August 4, 2026</h3>
       <span class="x" id="modalClose">✕</span>
     </div>
     <div class="modal-bd">
@@ -287,19 +306,25 @@
         </div>
         <div class="row2">
           <div class="field">
+            <label>Start date</label>
+            <input type="date" id="bStart" required="">
+          </div>
+          <div class="field">
             <label>Days to ferment / finish</label>
             <input type="number" id="bDays" min="1" max="120" value="14" required="">
           </div>
+        </div>
+        <div class="row2">
           <div class="field">
             <label>Brew colour</label>
             <select id="bColor"><option value="#ff7a4d">Tangerine</option><option value="#59b36a">Hop Green</option><option value="#7c5cff">Grape</option><option value="#3aa7e0">Sky</option><option value="#ff5da2">Berry</option><option value="#e59512">Amber</option><option value="#1fb6a6">Teal</option><option value="#e8443b">Cherry</option></select>
           </div>
+          <div class="field">
+            <label>Collab brewer <span style="text-transform:none;font-weight:600">(optional)</span></label>
+            <input type="text" id="bCollab" placeholder="Who with?" maxlength="60">
+          </div>
         </div>
-        <div class="field">
-          <label>Collab brewer <span style="text-transform:none;font-weight:600">(optional)</span></label>
-          <input type="text" id="bCollab" placeholder="Who are you brewing with?" maxlength="60">
-        </div>
-        <button type="submit" class="btn save" id="brewSaveBtn">Save brew</button>
+        <button type="submit" class="btn save" id="brewSaveBtn">Update brew</button>
       </form>
 
       <!-- Goal form -->
@@ -316,7 +341,7 @@
   </div>
 </div>
 
-<div class="toast" id="toast">📋 Copied! Paste into your GitHub file &amp; commit.</div>
+<div class="toast" id="toast">🍺 Tester added</div>
 
 <!-- Embedded snapshot data (updated when you publish) -->
 <script id="app-data" type="application/json">{"brews":[],"goals":[],"todos":[{"id":"ms56sg99dn4ei","text":"Order plastic glasses","cat":"task","done":false},{"id":"ms56slehvnupu","text":"Move voting system online","cat":"task","done":false},{"id":"ms56srixcqorc","text":"Troubleshoot voting system and awards","cat":"task","done":false},{"id":"ms56svi2yubvb","text":"Make introduction slideshow","cat":"task","done":false},{"id":"ms56t23ovnx45","text":"Organise prizes and sponsors","cat":"task","done":false}]}</script>
@@ -347,6 +372,7 @@
   var state = loadState();
   var addCat = "goal";        // side panel category selector
   var modalDateISO = null;    // day currently open in modal
+  var editingBrewId = null;   // brew currently being edited (null = adding new)
 
   function loadState(){
     try{
@@ -449,7 +475,7 @@
           var bar=document.createElement("div");
           bar.className="bar"+(cov.isReady?" ready":"");
           bar.style.background=cov.brew.color;
-          bar.textContent=(cov.isReady?"🍺 ":"")+cov.brew.name;
+          bar.textContent=(cov.isReady?"🍺 ":"")+cov.brew.name+(cov.brew.collab?" · 🤝 "+cov.brew.collab:"");
           bar.title=cov.brew.name+(cov.brew.collab?(" · with "+cov.brew.collab):"");
           cell.appendChild(bar); shown++;
         }
@@ -525,15 +551,61 @@
       var bn=document.createElement("div"); bn.className="bn";
       bn.innerHTML=escapeHTML(b.name)+"<small>"+shortDate(start)+" → 🍺 "+shortDate(ready)+" ("+b.days+"d)"+
         (b.collab?" · with "+escapeHTML(b.collab):"")+"</small>";
+      var edit=document.createElement("button"); edit.className="edit"; edit.innerHTML="✎"; edit.title="Edit brew";
+      edit.addEventListener("click",function(){ openModal(b.start); openBrewEditor(b); });
       var del=document.createElement("button"); del.className="del"; del.innerHTML="✕"; del.title="Delete brew";
       del.addEventListener("click",function(){
         if(confirm("Delete brew \""+b.name+"\"?")){ state.brews=state.brews.filter(function(x){return x.id!==b.id;}); save(); renderAll(); }
       });
-      row.appendChild(dot); row.appendChild(bn); row.appendChild(del);
+      row.appendChild(dot); row.appendChild(bn); row.appendChild(edit); row.appendChild(del);
       host.appendChild(row);
     });
   }
   function shortDate(d){ return d.toLocaleDateString(undefined,{day:"numeric",month:"short"}); }
+
+  function renderCollabs(){
+    var host=document.getElementById("collabList");
+    var sub=document.getElementById("collabSub");
+    host.innerHTML="";
+    var map={};
+    state.brews.forEach(function(b){
+      var name=(b.collab||"").trim();
+      if(!name) return;
+      var key=name.toLowerCase();
+      if(!map[key]) map[key]={name:name, beers:[]};
+      map[key].beers.push(b);
+    });
+    var keys=Object.keys(map);
+    if(!keys.length){ sub.textContent="No collab brews yet."; return; }
+    var totalBeers=keys.reduce(function(s,k){return s+map[k].beers.length;},0);
+    sub.textContent=keys.length+" collaborator"+(keys.length>1?"s":"")+" · "+totalBeers+" collab brew"+(totalBeers>1?"s":"");
+    keys.sort(function(a,b){ return map[b].beers.length-map[a].beers.length || map[a].name.localeCompare(map[b].name); });
+    keys.forEach(function(k){
+      var c=map[k];
+      var row=document.createElement("div"); row.className="collabrow";
+      var av=document.createElement("div"); av.className="avatar";
+      av.style.background=colorFor(c.name); av.textContent=initials(c.name);
+      var cn=document.createElement("div"); cn.className="cn";
+      var names=c.beers.map(function(b){return b.name;}).join(", ");
+      cn.innerHTML=escapeHTML(c.name)+"<small>"+escapeHTML(names)+"</small>";
+      cn.querySelector("small").title=names;
+      var badge=document.createElement("div"); badge.className="cbadge";
+      badge.textContent=c.beers.length;
+      badge.title=c.beers.length+" collab brew"+(c.beers.length>1?"s":"");
+      row.appendChild(av); row.appendChild(cn); row.appendChild(badge);
+      host.appendChild(row);
+    });
+  }
+  function initials(name){
+    var parts=name.trim().split(/\s+/);
+    var s=parts[0].charAt(0);
+    if(parts.length>1) s+=parts[parts.length-1].charAt(0);
+    return s.toUpperCase();
+  }
+  function colorFor(name){
+    var h=0; for(var i=0;i<name.length;i++){ h=(h*31+name.charCodeAt(i))>>>0; }
+    return PALETTE[h%PALETTE.length].c;
+  }
 
   function renderCountdown(){
     var today=new Date(); today.setHours(0,0,0,0);
@@ -545,7 +617,7 @@
     else el.innerHTML='<span class="big">'+Math.abs(n)+'</span><span class="lbl">days since BrewCon</span>';
   }
 
-  function renderAll(){ renderCalendar(); renderTodos(); renderBrews(); }
+  function renderAll(){ renderCalendar(); renderTodos(); renderBrews(); renderCollabs(); }
 
   // ---------- Modal ----------
   function onDayClick(e){
@@ -555,20 +627,42 @@
   }
   function openModal(k){
     modalDateISO=k;
+    editingBrewId=null;
     var p=parseISO(k);
     document.getElementById("modalDate").textContent=fmtDate(new Date(p.y,p.m,p.d));
     document.getElementById("brewForm").classList.add("hidden");
     document.getElementById("goalForm").classList.add("hidden");
     // reset brew fields
     document.getElementById("bName").value="";
+    document.getElementById("bStart").value=k;
     document.getElementById("bDays").value="14";
     document.getElementById("bCollab").value="";
     document.getElementById("bColor").selectedIndex = state.brews.length % PALETTE.length;
+    document.getElementById("brewSaveBtn").textContent="Save brew";
     document.getElementById("gText").value="";
     renderExisting(k);
     document.getElementById("overlay").classList.add("on");
   }
-  function closeModal(){ document.getElementById("overlay").classList.remove("on"); modalDateISO=null; }
+  function closeModal(){ document.getElementById("overlay").classList.remove("on"); modalDateISO=null; editingBrewId=null; }
+
+  // Open the brew form pre-filled to edit an existing brew.
+  function openBrewEditor(brew){
+    editingBrewId=brew.id;
+    document.getElementById("goalForm").classList.add("hidden");
+    document.getElementById("brewForm").classList.remove("hidden");
+    document.getElementById("bName").value=brew.name;
+    document.getElementById("bStart").value=brew.start;
+    document.getElementById("bDays").value=brew.days;
+    document.getElementById("bCollab").value=brew.collab||"";
+    var sel=document.getElementById("bColor");
+    var found=false;
+    for(var i=0;i<sel.options.length;i++){ if(sel.options[i].value===brew.color){ sel.selectedIndex=i; found=true; break; } }
+    if(!found){ // custom/legacy colour: add a temp option so it's preserved
+      var o=document.createElement("option"); o.value=brew.color; o.textContent="Current"; sel.appendChild(o); sel.value=brew.color;
+    }
+    document.getElementById("brewSaveBtn").textContent="Update brew";
+    document.getElementById("bName").focus();
+  }
 
   function renderExisting(k){
     var box=document.getElementById("existing");
@@ -583,7 +677,8 @@
       starting.forEach(function(b){
         html+='<div class="brewrow"><span class="dot" style="background:'+b.color+'"></span>'+
           '<span class="bn">🍺 '+escapeHTML(b.name)+'<small>ferments '+b.days+' days'+(b.collab?" · with "+escapeHTML(b.collab):"")+'</small></span>'+
-          '<button class="del" data-del-brew="'+b.id+'">✕</button></div>';
+          '<button class="edit" data-edit-brew="'+b.id+'" title="Edit brew">✎</button>'+
+          '<button class="del" data-del-brew="'+b.id+'" title="Delete brew">✕</button></div>';
       });
       goalsHere.forEach(function(g){
         html+='<div class="brewrow"><span class="dot" style="background:#ffd257"></span>'+
@@ -595,15 +690,27 @@
       html+='<h4 style="margin-top:12px">Also fermenting</h4>';
       covering.forEach(function(c){
         html+='<div class="brewrow"><span class="dot" style="background:'+c.brew.color+'"></span>'+
-          '<span class="bn">'+(c.isReady?"🍺 ":"")+escapeHTML(c.brew.name)+'<small>started '+shortDate(toDate(parseISO(c.brew.start)))+(c.isReady?" · ready today":"")+'</small></span></div>';
+          '<span class="bn">'+(c.isReady?"🍺 ":"")+escapeHTML(c.brew.name)+'<small>started '+shortDate(toDate(parseISO(c.brew.start)))+(c.isReady?" · ready today":"")+(c.brew.collab?" · with "+escapeHTML(c.brew.collab):"")+'</small></span>'+
+          '<button class="edit" data-edit-brew="'+c.brew.id+'" title="Edit brew">✎</button>'+
+          '<button class="del" data-del-brew="'+c.brew.id+'" title="Delete brew">✕</button></div>';
       });
     }
     if(!html) html='<div class="hint">Nothing here yet. Add a brew or goal above.</div>';
     box.innerHTML=html;
+    box.querySelectorAll("[data-edit-brew]").forEach(function(btn){
+      btn.addEventListener("click",function(){
+        var id=btn.getAttribute("data-edit-brew");
+        var brew=state.brews.filter(function(x){return x.id===id;})[0];
+        if(brew) openBrewEditor(brew);
+      });
+    });
     box.querySelectorAll("[data-del-brew]").forEach(function(btn){
       btn.addEventListener("click",function(){
         var id=btn.getAttribute("data-del-brew");
+        var brew=state.brews.filter(function(x){return x.id===id;})[0];
+        if(brew && !confirm("Delete brew \""+brew.name+"\"?")) return;
         state.brews=state.brews.filter(function(x){return x.id!==id;});
+        if(editingBrewId===id){ editingBrewId=null; document.getElementById("brewForm").classList.add("hidden"); }
         save(); renderAll(); renderExisting(k);
       });
     });
@@ -669,15 +776,23 @@
 
   document.getElementById("brewForm").addEventListener("submit",function(e){
     e.preventDefault();
-    if(!modalDateISO) return;
     var name=document.getElementById("bName").value.trim();
     if(!name) return;
+    var start=document.getElementById("bStart").value || modalDateISO;
+    if(!start) return;
     var days=Math.max(1, Math.min(120, parseInt(document.getElementById("bDays").value,10)||14));
-    var brew={ id:uid(), name:name, start:modalDateISO, days:days,
-      collab:document.getElementById("bCollab").value.trim(),
-      color:document.getElementById("bColor").value };
-    state.brews.push(brew); save(); renderAll();
-    toast("🍺 "+name+" added");
+    var collab=document.getElementById("bCollab").value.trim();
+    var color=document.getElementById("bColor").value;
+    if(editingBrewId){
+      var brew=state.brews.filter(function(x){return x.id===editingBrewId;})[0];
+      if(brew){ brew.name=name; brew.start=start; brew.days=days; brew.collab=collab; brew.color=color; }
+      save(); renderAll();
+      toast("✏️ "+name+" updated");
+    }else{
+      state.brews.push({ id:uid(), name:name, start:start, days:days, collab:collab, color:color });
+      save(); renderAll();
+      toast("🍺 "+name+" added");
+    }
     closeModal();
   });
 
