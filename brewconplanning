@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BrewCon Countdown</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&amp;family=Nunito:ital,wght@0,400;0,600;0,700;0,800;1,600&amp;display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#2b2440;
+    --paper:#fff9f0;
+    --cream:#fffdf8;
+    --line:#e7ddcb;
+    --accent:#ff7a4d;      /* tangerine */
+    --accent2:#ffb703;     /* amber */
+    --hop:#59b36a;         /* hop green */
+    --grape:#7c5cff;       /* purple */
+    --sky:#3aa7e0;         /* blue */
+    --pink:#ff5da2;
+    --event:#ff3d6e;
+    --shadow:0 6px 0 rgba(43,36,64,.10);
+    --radius:16px;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    font-family:'Nunito',system-ui,Segoe UI,sans-serif;
+    color:var(--ink);
+    background:
+      radial-gradient(circle at 12% 8%, #fff2df 0, transparent 40%),
+      radial-gradient(circle at 88% 4%, #ffe6ef 0, transparent 38%),
+      var(--paper);
+    background-attachment:fixed;
+    min-height:100vh;
+  }
+  h1,h2,h3,h4,.display{font-family:'Baloo 2',cursive;letter-spacing:.2px}
+
+  /* ---------- Header ---------- */
+  header{
+    position:sticky;top:0;z-index:40;
+    display:flex;align-items:center;gap:18px;flex-wrap:wrap;
+    padding:14px 22px;
+    background:linear-gradient(120deg,#ff7a4d,#ff5da2 55%,#7c5cff);
+    color:#fff;
+    box-shadow:0 4px 18px rgba(124,92,255,.28);
+  }
+  header .logo{font-family:'Baloo 2',cursive;font-weight:800;font-size:26px;
+    display:flex;align-items:center;gap:10px;line-height:1;text-shadow:0 2px 0 rgba(0,0,0,.12)}
+  header .logo .mug{font-size:30px;filter:drop-shadow(0 2px 0 rgba(0,0,0,.15))}
+  .countdown{
+    background:rgba(255,255,255,.18);border:2px solid rgba(255,255,255,.5);
+    padding:7px 16px;border-radius:999px;font-weight:800;font-family:'Baloo 2',cursive;
+    display:flex;align-items:baseline;gap:8px;backdrop-filter:blur(3px);white-space:nowrap;
+  }
+  .countdown .big{font-size:24px;line-height:1}
+  .countdown .lbl{font-size:12px;text-transform:uppercase;letter-spacing:1px;opacity:.92;font-family:'Nunito';font-weight:800}
+  header .spacer{flex:1}
+  .btn{
+    font-family:'Baloo 2',cursive;font-weight:700;font-size:15px;cursor:pointer;
+    border:none;border-radius:12px;padding:10px 16px;display:inline-flex;align-items:center;gap:8px;
+    transition:transform .08s ease, box-shadow .08s ease;
+  }
+  .btn:active{transform:translateY(2px)}
+  .btn-pub{background:#fff;color:#ff5a3c;box-shadow:0 4px 0 rgba(0,0,0,.18)}
+  .btn-pub:active{box-shadow:0 2px 0 rgba(0,0,0,.18)}
+  .btn-ghost{background:rgba(255,255,255,.16);color:#fff;border:2px solid rgba(255,255,255,.55)}
+
+  /* ---------- Layout ---------- */
+  .wrap{display:flex;gap:22px;align-items:flex-start;padding:22px;max-width:1500px;margin:0 auto}
+  .calpane{flex:1;min-width:0}
+  .sidepane{width:330px;flex:none;position:sticky;top:86px}
+  @media(max-width:1050px){
+    .wrap{flex-direction:column}
+    .sidepane{width:100%;position:static}
+  }
+
+  .toolbar{display:flex;align-items:center;gap:12px;margin-bottom:8px;flex-wrap:wrap}
+  .toolbar h2{margin:0;font-size:22px}
+  .legend{display:flex;gap:14px;flex-wrap:wrap;margin-left:auto;font-size:12.5px;font-weight:700;color:#6a6076}
+  .legend span{display:inline-flex;align-items:center;gap:5px}
+  .swatch{width:14px;height:14px;border-radius:4px;display:inline-block}
+
+  /* ---------- Months ---------- */
+  .months{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:20px}
+  .month{
+    background:var(--cream);border:2px solid var(--line);border-radius:var(--radius);
+    box-shadow:var(--shadow);overflow:hidden;
+  }
+  .month.hasEvent{border-color:var(--event);box-shadow:0 6px 0 rgba(255,61,110,.18)}
+  .month-hd{
+    font-family:'Baloo 2',cursive;font-weight:800;font-size:18px;color:#fff;
+    padding:10px 14px;display:flex;justify-content:space-between;align-items:center;
+    background:linear-gradient(100deg,var(--grape),var(--sky));
+  }
+  .month.hasEvent .month-hd{background:linear-gradient(100deg,var(--event),var(--accent))}
+  .dow{display:grid;grid-template-columns:repeat(7,1fr);background:#f3ecdd;color:#8a7f6d;
+    font-weight:800;font-size:11px;text-transform:uppercase;letter-spacing:.5px}
+  .dow div{padding:6px 0;text-align:center}
+  .grid{display:grid;grid-template-columns:repeat(7,1fr)}
+  .cell{
+    min-height:74px;border-right:1px solid #efe7d7;border-bottom:1px solid #efe7d7;
+    padding:4px 4px 5px;position:relative;cursor:pointer;transition:background .1s;
+    display:flex;flex-direction:column;gap:2px;
+  }
+  .cell:nth-child(7n){border-right:none}
+  .cell.blank{background:#faf5ea;cursor:default}
+  .cell:not(.blank):hover{background:#fff3e2}
+  .cell .num{font-weight:800;font-size:13px;color:#9a8f7d;line-height:1}
+  .cell.today .num{color:#fff;background:var(--sky);border-radius:999px;width:20px;height:20px;
+    display:flex;align-items:center;justify-content:center;font-size:11px}
+  .cell.eventday{background:linear-gradient(160deg,#ffe1ea,#fff)}
+  .cell.eventday .num{color:var(--event)}
+  .event-flag{
+    margin-top:auto;font-family:'Baloo 2',cursive;font-weight:800;font-size:11px;color:#fff;
+    background:var(--event);border-radius:6px;padding:2px 5px;text-align:center;line-height:1.15;
+  }
+  .bar{
+    font-size:10.5px;font-weight:800;color:#fff;border-radius:5px;padding:2px 5px;
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.25;
+    box-shadow:inset 0 -1px 0 rgba(0,0,0,.12);
+  }
+  .bar.ready{outline:2px solid #fff;box-shadow:0 0 0 2px rgba(0,0,0,.08)}
+  .goal-chip{
+    font-size:10.5px;font-weight:800;color:#7a5a00;background:#ffe08a;border:1px solid #f0c34a;
+    border-radius:5px;padding:2px 5px;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+    display:flex;align-items:center;gap:3px;
+  }
+  .more{font-size:10px;font-weight:800;color:#a99;padding-left:3px}
+
+  /* ---------- Side panel ---------- */
+  .card{background:var(--cream);border:2px solid var(--line);border-radius:var(--radius);
+    box-shadow:var(--shadow);padding:16px;margin-bottom:18px}
+  .card h3{margin:0 0 4px;font-size:19px;display:flex;align-items:center;gap:8px}
+  .sub{font-size:12.5px;color:#8a7f6d;font-weight:700;margin-bottom:12px}
+  .todo-add{display:flex;gap:6px;margin-bottom:6px}
+  .todo-add input[type=text]{flex:1;min-width:0}
+  input,select,textarea{
+    font-family:'Nunito';font-size:14px;font-weight:600;color:var(--ink);
+    border:2px solid var(--line);border-radius:10px;padding:8px 10px;background:#fff;outline:none;width:100%;
+  }
+  input:focus,select:focus,textarea:focus{border-color:var(--accent)}
+  .seg{display:flex;gap:5px;margin:8px 0 12px}
+  .seg button{flex:1;font-family:'Baloo 2',cursive;font-weight:700;font-size:12.5px;
+    border:2px solid var(--line);background:#fff;color:#8a7f6d;border-radius:9px;padding:6px 4px;cursor:pointer}
+  .seg button.on{color:#fff;border-color:transparent}
+  .seg button[data-cat=goal].on{background:var(--grape)}
+  .seg button[data-cat=target].on{background:var(--sky)}
+  .seg button[data-cat=task].on{background:var(--hop)}
+  .todo-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:7px}
+  .todo{
+    display:flex;align-items:flex-start;gap:9px;background:#fff;border:2px solid var(--line);
+    border-radius:11px;padding:8px 10px;border-left-width:6px;
+  }
+  .todo[data-cat=goal]{border-left-color:var(--grape)}
+  .todo[data-cat=target]{border-left-color:var(--sky)}
+  .todo[data-cat=task]{border-left-color:var(--hop)}
+  .todo.done{opacity:.55}
+  .todo.done .txt{text-decoration:line-through}
+  .todo .chk{margin-top:2px;width:20px;height:20px;flex:none;cursor:pointer;accent-color:var(--hop)}
+  .todo .txt{flex:1;font-weight:700;font-size:14px;word-break:break-word}
+  .todo .tag{font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:#fff;
+    border-radius:5px;padding:1px 5px;align-self:flex-start;margin-top:2px}
+  .todo[data-cat=goal] .tag{background:var(--grape)}
+  .todo[data-cat=target] .tag{background:var(--sky)}
+  .todo[data-cat=task] .tag{background:var(--hop)}
+  .todo .del{border:none;background:none;cursor:pointer;color:#c9bfae;font-size:16px;font-weight:800;padding:0 2px}
+  .todo .del:hover{color:var(--event)}
+  .progress{height:12px;background:#efe7d7;border-radius:999px;overflow:hidden;margin:4px 0 10px}
+  .progress > i{display:block;height:100%;background:linear-gradient(90deg,var(--hop),var(--accent2));width:0;transition:width .3s}
+  .empty{font-size:13px;color:#a99;font-weight:700;text-align:center;padding:10px 0}
+
+  /* brews list card */
+  .brewrow{display:flex;align-items:center;gap:9px;padding:7px 0;border-bottom:1px dashed #eadfca}
+  .brewrow:last-child{border-bottom:none}
+  .brewrow .dot{width:14px;height:14px;border-radius:5px;flex:none}
+  .brewrow .bn{flex:1;font-weight:800;font-size:14px;min-width:0}
+  .brewrow .bn small{display:block;font-weight:700;color:#8a7f6d;font-size:11.5px}
+  .brewrow .del{border:none;background:none;cursor:pointer;color:#c9bfae;font-size:15px;font-weight:800}
+  .brewrow .del:hover{color:var(--event)}
+
+  /* ---------- Modal ---------- */
+  .overlay{position:fixed;inset:0;background:rgba(43,36,64,.45);backdrop-filter:blur(2px);
+    display:none;align-items:flex-start;justify-content:center;z-index:60;padding:40px 16px;overflow:auto}
+  .overlay.on{display:flex}
+  .modal{background:var(--cream);border-radius:20px;width:100%;max-width:440px;
+    box-shadow:0 20px 50px rgba(43,36,64,.4);border:3px solid #fff;overflow:hidden}
+  .modal-hd{background:linear-gradient(100deg,var(--accent),var(--pink));color:#fff;padding:14px 18px;
+    display:flex;justify-content:space-between;align-items:center}
+  .modal-hd h3{margin:0;font-size:20px;color:#fff}
+  .modal-hd .x{cursor:pointer;font-size:22px;font-weight:800;line-height:1;opacity:.9}
+  .modal-bd{padding:16px 18px 20px}
+  .choice{display:flex;gap:10px;margin-bottom:6px}
+  .choice button{flex:1;font-family:'Baloo 2',cursive;font-weight:700;font-size:15px;cursor:pointer;
+    border-radius:12px;padding:12px;border:2px dashed var(--line);background:#fff;color:var(--ink)}
+  .choice button.brew{border-color:var(--accent);color:var(--accent)}
+  .choice button.goal{border-color:var(--grape);color:var(--grape)}
+  .choice button:hover{background:#fff6ee}
+  .field{margin:11px 0}
+  .field label{display:block;font-weight:800;font-size:12.5px;color:#8a7f6d;margin-bottom:4px;text-transform:uppercase;letter-spacing:.4px}
+  .row2{display:flex;gap:10px}
+  .row2 .field{flex:1}
+  .save{width:100%;margin-top:8px;justify-content:center;background:var(--hop);color:#fff;box-shadow:0 4px 0 rgba(0,0,0,.15)}
+  .existing{margin-top:14px;border-top:2px dashed var(--line);padding-top:10px}
+  .existing h4{margin:0 0 8px;font-size:13px;color:#8a7f6d;text-transform:uppercase;letter-spacing:.5px}
+  .hint{font-size:12px;color:#a99;font-weight:700}
+  .hidden{display:none!important}
+
+  .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(30px);
+    background:var(--ink);color:#fff;font-weight:800;font-family:'Baloo 2',cursive;
+    padding:12px 22px;border-radius:999px;box-shadow:0 8px 24px rgba(0,0,0,.3);
+    opacity:0;transition:all .3s;z-index:80;pointer-events:none;max-width:90vw;text-align:center}
+  .toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+  footer{text-align:center;color:#b7ac9a;font-weight:700;font-size:12.5px;padding:10px 0 34px}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo"><span class="mug">🍺</span> BrewCon Countdown</div>
+  <div class="countdown" id="countdown"><span class="big">101</span><span class="lbl">days to BrewCon</span></div>
+  <div class="spacer"></div>
+  <button class="btn btn-ghost" id="helpBtn">＋ New brew</button>
+  <button class="btn btn-pub" id="pubBtn">⬆ Update to GitHub</button>
+</header>
+
+<div class="wrap">
+  <!-- Calendar -->
+  <div class="calpane">
+    <div class="toolbar">
+      <h2>🗓️ Brew Plan</h2>
+      <div class="legend">
+        <span><i class="swatch" style="background:var(--accent)"></i> Fermenting</span>
+        <span>🍺 Ready day</span>
+        <span><i class="swatch" style="background:#ffe08a;border:1px solid #f0c34a"></i> BrewCon goal</span>
+        <span><i class="swatch" style="background:var(--event)"></i> Event</span>
+      </div>
+    </div>
+    <div class="months" id="months"><div class="month"><div class="month-hd"><span>July 2026</span></div><div class="dow"><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div><div>Sun</div></div><div class="grid"><div class="cell blank"></div><div class="cell blank"></div><div class="cell" data-iso="2026-07-01"><div class="num">1</div></div><div class="cell" data-iso="2026-07-02"><div class="num">2</div></div><div class="cell" data-iso="2026-07-03"><div class="num">3</div></div><div class="cell" data-iso="2026-07-04"><div class="num">4</div></div><div class="cell" data-iso="2026-07-05"><div class="num">5</div></div><div class="cell" data-iso="2026-07-06"><div class="num">6</div></div><div class="cell" data-iso="2026-07-07"><div class="num">7</div></div><div class="cell" data-iso="2026-07-08"><div class="num">8</div></div><div class="cell" data-iso="2026-07-09"><div class="num">9</div></div><div class="cell" data-iso="2026-07-10"><div class="num">10</div></div><div class="cell" data-iso="2026-07-11"><div class="num">11</div></div><div class="cell" data-iso="2026-07-12"><div class="num">12</div></div><div class="cell" data-iso="2026-07-13"><div class="num">13</div></div><div class="cell" data-iso="2026-07-14"><div class="num">14</div></div><div class="cell" data-iso="2026-07-15"><div class="num">15</div></div><div class="cell" data-iso="2026-07-16"><div class="num">16</div></div><div class="cell" data-iso="2026-07-17"><div class="num">17</div></div><div class="cell" data-iso="2026-07-18"><div class="num">18</div></div><div class="cell" data-iso="2026-07-19"><div class="num">19</div></div><div class="cell" data-iso="2026-07-20"><div class="num">20</div></div><div class="cell" data-iso="2026-07-21"><div class="num">21</div></div><div class="cell" data-iso="2026-07-22"><div class="num">22</div></div><div class="cell" data-iso="2026-07-23"><div class="num">23</div></div><div class="cell" data-iso="2026-07-24"><div class="num">24</div></div><div class="cell" data-iso="2026-07-25"><div class="num">25</div></div><div class="cell" data-iso="2026-07-26"><div class="num">26</div></div><div class="cell" data-iso="2026-07-27"><div class="num">27</div></div><div class="cell" data-iso="2026-07-28"><div class="num">28</div></div><div class="cell today" data-iso="2026-07-29"><div class="num">29</div></div><div class="cell" data-iso="2026-07-30"><div class="num">30</div></div><div class="cell" data-iso="2026-07-31"><div class="num">31</div></div></div></div><div class="month"><div class="month-hd"><span>August 2026</span></div><div class="dow"><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div><div>Sun</div></div><div class="grid"><div class="cell blank"></div><div class="cell blank"></div><div class="cell blank"></div><div class="cell blank"></div><div class="cell blank"></div><div class="cell" data-iso="2026-08-01"><div class="num">1</div></div><div class="cell" data-iso="2026-08-02"><div class="num">2</div></div><div class="cell" data-iso="2026-08-03"><div class="num">3</div></div><div class="cell" data-iso="2026-08-04"><div class="num">4</div></div><div class="cell" data-iso="2026-08-05"><div class="num">5</div></div><div class="cell" data-iso="2026-08-06"><div class="num">6</div></div><div class="cell" data-iso="2026-08-07"><div class="num">7</div></div><div class="cell" data-iso="2026-08-08"><div class="num">8</div></div><div class="cell" data-iso="2026-08-09"><div class="num">9</div></div><div class="cell" data-iso="2026-08-10"><div class="num">10</div></div><div class="cell" data-iso="2026-08-11"><div class="num">11</div></div><div class="cell" data-iso="2026-08-12"><div class="num">12</div></div><div class="cell" data-iso="2026-08-13"><div class="num">13</div></div><div class="cell" data-iso="2026-08-14"><div class="num">14</div></div><div class="cell" data-iso="2026-08-15"><div class="num">15</div></div><div class="cell" data-iso="2026-08-16"><div class="num">16</div></div><div class="cell" data-iso="2026-08-17"><div class="num">17</div></div><div class="cell" data-iso="2026-08-18"><div class="num">18</div></div><div class="cell" data-iso="2026-08-19"><div class="num">19</div></div><div class="cell" data-iso="2026-08-20"><div class="num">20</div></div><div class="cell" data-iso="2026-08-21"><div class="num">21</div></div><div class="cell" data-iso="2026-08-22"><div class="num">22</div></div><div class="cell" data-iso="2026-08-23"><div class="num">23</div></div><div class="cell" data-iso="2026-08-24"><div class="num">24</div></div><div class="cell" data-iso="2026-08-25"><div class="num">25</div></div><div class="cell" data-iso="2026-08-26"><div class="num">26</div></div><div class="cell" data-iso="2026-08-27"><div class="num">27</div></div><div class="cell" data-iso="2026-08-28"><div class="num">28</div></div><div class="cell" data-iso="2026-08-29"><div class="num">29</div></div><div class="cell" data-iso="2026-08-30"><div class="num">30</div></div><div class="cell" data-iso="2026-08-31"><div class="num">31</div></div></div></div><div class="month"><div class="month-hd"><span>September 2026</span></div><div class="dow"><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div><div>Sun</div></div><div class="grid"><div class="cell blank"></div><div class="cell" data-iso="2026-09-01"><div class="num">1</div></div><div class="cell" data-iso="2026-09-02"><div class="num">2</div></div><div class="cell" data-iso="2026-09-03"><div class="num">3</div></div><div class="cell" data-iso="2026-09-04"><div class="num">4</div></div><div class="cell" data-iso="2026-09-05"><div class="num">5</div></div><div class="cell" data-iso="2026-09-06"><div class="num">6</div></div><div class="cell" data-iso="2026-09-07"><div class="num">7</div></div><div class="cell" data-iso="2026-09-08"><div class="num">8</div></div><div class="cell" data-iso="2026-09-09"><div class="num">9</div></div><div class="cell" data-iso="2026-09-10"><div class="num">10</div></div><div class="cell" data-iso="2026-09-11"><div class="num">11</div></div><div class="cell" data-iso="2026-09-12"><div class="num">12</div></div><div class="cell" data-iso="2026-09-13"><div class="num">13</div></div><div class="cell" data-iso="2026-09-14"><div class="num">14</div></div><div class="cell" data-iso="2026-09-15"><div class="num">15</div></div><div class="cell" data-iso="2026-09-16"><div class="num">16</div></div><div class="cell" data-iso="2026-09-17"><div class="num">17</div></div><div class="cell" data-iso="2026-09-18"><div class="num">18</div></div><div class="cell" data-iso="2026-09-19"><div class="num">19</div></div><div class="cell" data-iso="2026-09-20"><div class="num">20</div></div><div class="cell" data-iso="2026-09-21"><div class="num">21</div></div><div class="cell" data-iso="2026-09-22"><div class="num">22</div></div><div class="cell" data-iso="2026-09-23"><div class="num">23</div></div><div class="cell" data-iso="2026-09-24"><div class="num">24</div></div><div class="cell" data-iso="2026-09-25"><div class="num">25</div></div><div class="cell" data-iso="2026-09-26"><div class="num">26</div></div><div class="cell" data-iso="2026-09-27"><div class="num">27</div></div><div class="cell" data-iso="2026-09-28"><div class="num">28</div></div><div class="cell" data-iso="2026-09-29"><div class="num">29</div></div><div class="cell" data-iso="2026-09-30"><div class="num">30</div></div></div></div><div class="month"><div class="month-hd"><span>October 2026</span></div><div class="dow"><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div><div>Sun</div></div><div class="grid"><div class="cell blank"></div><div class="cell blank"></div><div class="cell blank"></div><div class="cell" data-iso="2026-10-01"><div class="num">1</div></div><div class="cell" data-iso="2026-10-02"><div class="num">2</div></div><div class="cell" data-iso="2026-10-03"><div class="num">3</div></div><div class="cell" data-iso="2026-10-04"><div class="num">4</div></div><div class="cell" data-iso="2026-10-05"><div class="num">5</div></div><div class="cell" data-iso="2026-10-06"><div class="num">6</div></div><div class="cell" data-iso="2026-10-07"><div class="num">7</div></div><div class="cell" data-iso="2026-10-08"><div class="num">8</div></div><div class="cell" data-iso="2026-10-09"><div class="num">9</div></div><div class="cell" data-iso="2026-10-10"><div class="num">10</div></div><div class="cell" data-iso="2026-10-11"><div class="num">11</div></div><div class="cell" data-iso="2026-10-12"><div class="num">12</div></div><div class="cell" data-iso="2026-10-13"><div class="num">13</div></div><div class="cell" data-iso="2026-10-14"><div class="num">14</div></div><div class="cell" data-iso="2026-10-15"><div class="num">15</div></div><div class="cell" data-iso="2026-10-16"><div class="num">16</div></div><div class="cell" data-iso="2026-10-17"><div class="num">17</div></div><div class="cell" data-iso="2026-10-18"><div class="num">18</div></div><div class="cell" data-iso="2026-10-19"><div class="num">19</div></div><div class="cell" data-iso="2026-10-20"><div class="num">20</div></div><div class="cell" data-iso="2026-10-21"><div class="num">21</div></div><div class="cell" data-iso="2026-10-22"><div class="num">22</div></div><div class="cell" data-iso="2026-10-23"><div class="num">23</div></div><div class="cell" data-iso="2026-10-24"><div class="num">24</div></div><div class="cell" data-iso="2026-10-25"><div class="num">25</div></div><div class="cell" data-iso="2026-10-26"><div class="num">26</div></div><div class="cell" data-iso="2026-10-27"><div class="num">27</div></div><div class="cell" data-iso="2026-10-28"><div class="num">28</div></div><div class="cell" data-iso="2026-10-29"><div class="num">29</div></div><div class="cell" data-iso="2026-10-30"><div class="num">30</div></div><div class="cell" data-iso="2026-10-31"><div class="num">31</div></div></div></div><div class="month hasEvent"><div class="month-hd"><span>November 2026</span><span>🎉 BrewCon!</span></div><div class="dow"><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div><div>Sun</div></div><div class="grid"><div class="cell blank"></div><div class="cell blank"></div><div class="cell blank"></div><div class="cell blank"></div><div class="cell blank"></div><div class="cell blank"></div><div class="cell" data-iso="2026-11-01"><div class="num">1</div></div><div class="cell" data-iso="2026-11-02"><div class="num">2</div></div><div class="cell" data-iso="2026-11-03"><div class="num">3</div></div><div class="cell" data-iso="2026-11-04"><div class="num">4</div></div><div class="cell" data-iso="2026-11-05"><div class="num">5</div></div><div class="cell" data-iso="2026-11-06"><div class="num">6</div></div><div class="cell eventday" data-iso="2026-11-07"><div class="num">7</div><div class="event-flag">🎉 BREWCON</div></div><div class="cell" data-iso="2026-11-08"><div class="num">8</div></div><div class="cell" data-iso="2026-11-09"><div class="num">9</div></div><div class="cell" data-iso="2026-11-10"><div class="num">10</div></div><div class="cell" data-iso="2026-11-11"><div class="num">11</div></div><div class="cell" data-iso="2026-11-12"><div class="num">12</div></div><div class="cell" data-iso="2026-11-13"><div class="num">13</div></div><div class="cell" data-iso="2026-11-14"><div class="num">14</div></div><div class="cell" data-iso="2026-11-15"><div class="num">15</div></div><div class="cell" data-iso="2026-11-16"><div class="num">16</div></div><div class="cell" data-iso="2026-11-17"><div class="num">17</div></div><div class="cell" data-iso="2026-11-18"><div class="num">18</div></div><div class="cell" data-iso="2026-11-19"><div class="num">19</div></div><div class="cell" data-iso="2026-11-20"><div class="num">20</div></div><div class="cell" data-iso="2026-11-21"><div class="num">21</div></div><div class="cell" data-iso="2026-11-22"><div class="num">22</div></div><div class="cell" data-iso="2026-11-23"><div class="num">23</div></div><div class="cell" data-iso="2026-11-24"><div class="num">24</div></div><div class="cell" data-iso="2026-11-25"><div class="num">25</div></div><div class="cell" data-iso="2026-11-26"><div class="num">26</div></div><div class="cell" data-iso="2026-11-27"><div class="num">27</div></div><div class="cell" data-iso="2026-11-28"><div class="num">28</div></div><div class="cell" data-iso="2026-11-29"><div class="num">29</div></div><div class="cell" data-iso="2026-11-30"><div class="num">30</div></div></div></div></div>
+    <footer>Click any day to add a brew or a BrewCon goal · Data saved in this browser</footer>
+  </div>
+
+  <!-- Side panel -->
+  <div class="sidepane">
+    <div class="card">
+      <h3>✅ Goals &amp; Tasks</h3>
+      <div class="sub">Track everything you need done before BrewCon.</div>
+      <div class="progress"><i id="progbar" style="width: 0%;"></i></div>
+      <div class="todo-add">
+        <input type="text" id="todoText" placeholder="Add a goal, target or task…" maxlength="120">
+        <button class="btn" style="background:var(--accent);color:#fff;box-shadow:0 4px 0 rgba(0,0,0,.15)" id="todoAdd">Add</button>
+      </div>
+      <div class="seg" id="catSeg">
+        <button data-cat="goal" class="on">🎯 Goal</button>
+        <button data-cat="target">📈 Target</button>
+        <button data-cat="task">🔧 Task</button>
+      </div>
+      <ul class="todo-list" id="todoList"><li class="empty">Nothing yet — add your first goal above ☝️</li></ul>
+    </div>
+
+    <div class="card">
+      <h3>🍻 Brews</h3>
+      <div class="sub" id="brewCount">No brews planned yet.</div>
+      <div id="brewList"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Day modal -->
+<div class="overlay" id="overlay">
+  <div class="modal">
+    <div class="modal-hd">
+      <h3 id="modalDate">Day</h3>
+      <span class="x" id="modalClose">✕</span>
+    </div>
+    <div class="modal-bd">
+      <div class="choice">
+        <button class="brew" id="pickBrew">🍺 Add a Brew</button>
+        <button class="goal" id="pickGoal">🎯 BrewCon Goal</button>
+      </div>
+
+      <!-- Brew form -->
+      <form id="brewForm" class="hidden">
+        <div class="field">
+          <label>Beer name</label>
+          <input type="text" id="bName" placeholder="e.g. Hazy Pale Ale" required="" maxlength="60">
+        </div>
+        <div class="row2">
+          <div class="field">
+            <label>Days to ferment / finish</label>
+            <input type="number" id="bDays" min="1" max="120" value="14" required="">
+          </div>
+          <div class="field">
+            <label>Brew colour</label>
+            <select id="bColor"><option value="#ff7a4d">Tangerine</option><option value="#59b36a">Hop Green</option><option value="#7c5cff">Grape</option><option value="#3aa7e0">Sky</option><option value="#ff5da2">Berry</option><option value="#e59512">Amber</option><option value="#1fb6a6">Teal</option><option value="#e8443b">Cherry</option></select>
+          </div>
+        </div>
+        <div class="field">
+          <label>Collab brewer <span style="text-transform:none;font-weight:600">(optional)</span></label>
+          <input type="text" id="bCollab" placeholder="Who are you brewing with?" maxlength="60">
+        </div>
+        <button type="submit" class="btn save" id="brewSaveBtn">Save brew</button>
+      </form>
+
+      <!-- Goal form -->
+      <form id="goalForm" class="hidden">
+        <div class="field">
+          <label>What needs doing?</label>
+          <input type="text" id="gText" placeholder="e.g. Order kegs, book venue…" required="" maxlength="100">
+        </div>
+        <button type="submit" class="btn save" style="background:var(--grape)">Save goal</button>
+      </form>
+
+      <div class="existing" id="existing"></div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast">📋 Copied! Paste into your GitHub file &amp; commit.</div>
+
+<!-- Embedded snapshot data (updated when you publish) -->
+<script id="app-data" type="application/json">{"brews":[],"goals":[],"todos":[]}</script>
+
+<script>
+(function(){
+  "use strict";
+
+  // ---------- Config ----------
+  var EVENT = {y:2026, m:10, d:7};          // Nov 7 2026 (month is 0-based)
+  var START = {y:2026, m:6};                // July 2026 (0-based month)
+  var END   = {y:2026, m:10};               // Nov 2026
+  var MONTH_NAMES = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+  var DOW = ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
+  var PALETTE = [
+    {name:"Tangerine", c:"#ff7a4d"},
+    {name:"Hop Green", c:"#59b36a"},
+    {name:"Grape",     c:"#7c5cff"},
+    {name:"Sky",       c:"#3aa7e0"},
+    {name:"Berry",     c:"#ff5da2"},
+    {name:"Amber",     c:"#e59512"},
+    {name:"Teal",      c:"#1fb6a6"},
+    {name:"Cherry",    c:"#e8443b"}
+  ];
+
+  // ---------- State ----------
+  var LS_KEY = "brewcon-calendar-v1";
+  var state = loadState();
+  var addCat = "goal";        // side panel category selector
+  var modalDateISO = null;    // day currently open in modal
+
+  function loadState(){
+    try{
+      var ls = localStorage.getItem(LS_KEY);
+      if(ls) return normalize(JSON.parse(ls));
+    }catch(e){}
+    try{
+      var el = document.getElementById("app-data");
+      if(el) return normalize(JSON.parse(el.textContent||"{}"));
+    }catch(e){}
+    return {brews:[], goals:[], todos:[]};
+  }
+  function normalize(o){
+    o=o||{};
+    return {brews:o.brews||[], goals:o.goals||[], todos:o.todos||[]};
+  }
+  function save(){
+    try{ localStorage.setItem(LS_KEY, JSON.stringify(state)); }catch(e){}
+  }
+  function uid(){ return Date.now().toString(36)+Math.random().toString(36).slice(2,7); }
+
+  // ---------- Date helpers ----------
+  function iso(y,m,d){ return y+"-"+pad(m+1)+"-"+pad(d); }   // m is 0-based
+  function pad(n){ return (n<10?"0":"")+n; }
+  function parseISO(s){ var p=s.split("-"); return {y:+p[0], m:+p[1]-1, d:+p[2]}; }
+  function toDate(o){ return new Date(o.y, o.m, o.d); }
+  function addDays(dateObj, n){ var d=new Date(dateObj); d.setDate(d.getDate()+n); return d; }
+  function fmtDate(d){ return d.toLocaleDateString(undefined,{weekday:"long",day:"numeric",month:"long",year:"numeric"}); }
+  function daysBetween(a,b){ return Math.round((b-a)/86400000); }
+
+  // Build a lookup of what each day contains, keyed by ISO string.
+  function buildIndex(){
+    var idx = {};        // iso -> {covers:[{brew, isReady}], goals:[goal]}
+    function slot(k){ if(!idx[k]) idx[k]={covers:[], goals:[]}; return idx[k]; }
+    state.brews.forEach(function(b){
+      var start = toDate(parseISO(b.start));
+      var days = Math.max(1, +b.days||1);
+      for(var i=0;i<=days;i++){                 // start day .. start+days (ready day)
+        var d = addDays(start, i);
+        var k = iso(d.getFullYear(), d.getMonth(), d.getDate());
+        slot(k).covers.push({brew:b, isReady:(i===days)});
+      }
+    });
+    state.goals.forEach(function(g){ slot(g.date).goals.push(g); });
+    return idx;
+  }
+
+  // ---------- Rendering: calendar ----------
+  function renderCalendar(){
+    var idx = buildIndex();
+    var host = document.getElementById("months");
+    host.innerHTML = "";
+    var todayD = new Date(); todayD.setHours(0,0,0,0);
+    var eventK = iso(EVENT.y, EVENT.m, EVENT.d);
+
+    var y=START.y, m=START.m;
+    while(y<END.y || (y===END.y && m<=END.m)){
+      host.appendChild(buildMonth(y, m, idx, todayD, eventK));
+      m++; if(m>11){m=0;y++;}
+    }
+  }
+
+  function buildMonth(y, m, idx, todayD, eventK){
+    var hasEvent = (y===EVENT.y && m===EVENT.m);
+    var wrap = document.createElement("div");
+    wrap.className = "month"+(hasEvent?" hasEvent":"");
+
+    var hd = document.createElement("div");
+    hd.className="month-hd";
+    hd.innerHTML = "<span>"+MONTH_NAMES[m]+" "+y+"</span>"+(hasEvent?"<span>🎉 BrewCon!</span>":"");
+    wrap.appendChild(hd);
+
+    var dow = document.createElement("div"); dow.className="dow";
+    DOW.forEach(function(d){ var c=document.createElement("div"); c.textContent=d; dow.appendChild(c); });
+    wrap.appendChild(dow);
+
+    var grid = document.createElement("div"); grid.className="grid";
+    var first = new Date(y,m,1);
+    var lead = (first.getDay()+6)%7;              // make Monday first
+    var dim = new Date(y,m+1,0).getDate();
+    for(var i=0;i<lead;i++){ var b=document.createElement("div"); b.className="cell blank"; grid.appendChild(b); }
+
+    for(var day=1; day<=dim; day++){
+      var k = iso(y,m,day);
+      var cell = document.createElement("div");
+      cell.className="cell";
+      var thisD = new Date(y,m,day); thisD.setHours(0,0,0,0);
+      if(+thisD===+todayD) cell.className+=" today";
+      var isEvent = (k===eventK);
+      if(isEvent) cell.className+=" eventday";
+      cell.dataset.iso = k;
+
+      var num=document.createElement("div"); num.className="num"; num.textContent=day; cell.appendChild(num);
+
+      var info = idx[k];
+      var shown=0, maxShow=3;
+      if(info){
+        for(var ci=0; ci<info.covers.length && shown<maxShow; ci++){
+          var cov=info.covers[ci];
+          var bar=document.createElement("div");
+          bar.className="bar"+(cov.isReady?" ready":"");
+          bar.style.background=cov.brew.color;
+          bar.textContent=(cov.isReady?"🍺 ":"")+cov.brew.name;
+          bar.title=cov.brew.name+(cov.brew.collab?(" · with "+cov.brew.collab):"");
+          cell.appendChild(bar); shown++;
+        }
+        for(var gi=0; gi<info.goals.length && shown<maxShow; gi++){
+          var chip=document.createElement("div"); chip.className="goal-chip";
+          chip.innerHTML="🎯 <span>"+escapeHTML(info.goals[gi].text)+"</span>";
+          chip.title=info.goals[gi].text;
+          cell.appendChild(chip); shown++;
+        }
+        var total = info.covers.length + info.goals.length;
+        if(total>maxShow){
+          var more=document.createElement("div"); more.className="more"; more.textContent="+"+(total-maxShow)+" more";
+          cell.appendChild(more);
+        }
+      }
+      if(isEvent){
+        var flag=document.createElement("div"); flag.className="event-flag"; flag.textContent="🎉 BREWCON";
+        cell.appendChild(flag);
+      }
+
+      cell.addEventListener("click", onDayClick);
+      grid.appendChild(cell);
+    }
+    wrap.appendChild(grid);
+    return wrap;
+  }
+
+  // ---------- Rendering: side panel ----------
+  function renderTodos(){
+    var list=document.getElementById("todoList");
+    list.innerHTML="";
+    if(!state.todos.length){
+      list.innerHTML='<li class="empty">Nothing yet — add your first goal above ☝️</li>';
+    }else{
+      var order={goal:0,target:1,task:2};
+      var sorted = state.todos.slice().sort(function(a,b){
+        if(a.done!==b.done) return a.done?1:-1;
+        return (order[a.cat]||9)-(order[b.cat]||9);
+      });
+      sorted.forEach(function(t){
+        var li=document.createElement("li");
+        li.className="todo"+(t.done?" done":"");
+        li.dataset.cat=t.cat;
+        var cb=document.createElement("input");
+        cb.type="checkbox"; cb.className="chk"; cb.checked=!!t.done;
+        cb.addEventListener("change",function(){ t.done=cb.checked; save(); renderTodos(); });
+        var txt=document.createElement("div"); txt.className="txt"; txt.textContent=t.text;
+        var tag=document.createElement("span"); tag.className="tag"; tag.textContent=t.cat;
+        var del=document.createElement("button"); del.className="del"; del.innerHTML="✕";
+        del.title="Delete";
+        del.addEventListener("click",function(){ state.todos=state.todos.filter(function(x){return x.id!==t.id;}); save(); renderTodos(); });
+        li.appendChild(cb); li.appendChild(txt); li.appendChild(tag); li.appendChild(del);
+        list.appendChild(li);
+      });
+    }
+    var done=state.todos.filter(function(t){return t.done;}).length;
+    var pct = state.todos.length? Math.round(done/state.todos.length*100):0;
+    document.getElementById("progbar").style.width=pct+"%";
+  }
+
+  function renderBrews(){
+    var host=document.getElementById("brewList");
+    var cnt=document.getElementById("brewCount");
+    host.innerHTML="";
+    if(!state.brews.length){ cnt.textContent="No brews planned yet."; return; }
+    var sorted = state.brews.slice().sort(function(a,b){ return a.start<b.start?-1:1; });
+    cnt.textContent = state.brews.length+" brew"+(state.brews.length>1?"s":"")+" planned.";
+    sorted.forEach(function(b){
+      var row=document.createElement("div"); row.className="brewrow";
+      var start=toDate(parseISO(b.start));
+      var ready=addDays(start, Math.max(1,+b.days||1));
+      var dot=document.createElement("div"); dot.className="dot"; dot.style.background=b.color;
+      var bn=document.createElement("div"); bn.className="bn";
+      bn.innerHTML=escapeHTML(b.name)+"<small>"+shortDate(start)+" → 🍺 "+shortDate(ready)+" ("+b.days+"d)"+
+        (b.collab?" · with "+escapeHTML(b.collab):"")+"</small>";
+      var del=document.createElement("button"); del.className="del"; del.innerHTML="✕"; del.title="Delete brew";
+      del.addEventListener("click",function(){
+        if(confirm("Delete brew \""+b.name+"\"?")){ state.brews=state.brews.filter(function(x){return x.id!==b.id;}); save(); renderAll(); }
+      });
+      row.appendChild(dot); row.appendChild(bn); row.appendChild(del);
+      host.appendChild(row);
+    });
+  }
+  function shortDate(d){ return d.toLocaleDateString(undefined,{day:"numeric",month:"short"}); }
+
+  function renderCountdown(){
+    var today=new Date(); today.setHours(0,0,0,0);
+    var ev=new Date(EVENT.y,EVENT.m,EVENT.d);
+    var n=daysBetween(today,ev);
+    var el=document.getElementById("countdown");
+    if(n>0) el.innerHTML='<span class="big">'+n+'</span><span class="lbl">days to BrewCon</span>';
+    else if(n===0) el.innerHTML='<span class="big">🎉</span><span class="lbl">BrewCon is today!</span>';
+    else el.innerHTML='<span class="big">'+Math.abs(n)+'</span><span class="lbl">days since BrewCon</span>';
+  }
+
+  function renderAll(){ renderCalendar(); renderTodos(); renderBrews(); }
+
+  // ---------- Modal ----------
+  function onDayClick(e){
+    var k=e.currentTarget.dataset.iso;
+    if(!k) return;
+    openModal(k);
+  }
+  function openModal(k){
+    modalDateISO=k;
+    var p=parseISO(k);
+    document.getElementById("modalDate").textContent=fmtDate(new Date(p.y,p.m,p.d));
+    document.getElementById("brewForm").classList.add("hidden");
+    document.getElementById("goalForm").classList.add("hidden");
+    // reset brew fields
+    document.getElementById("bName").value="";
+    document.getElementById("bDays").value="14";
+    document.getElementById("bCollab").value="";
+    document.getElementById("bColor").selectedIndex = state.brews.length % PALETTE.length;
+    document.getElementById("gText").value="";
+    renderExisting(k);
+    document.getElementById("overlay").classList.add("on");
+  }
+  function closeModal(){ document.getElementById("overlay").classList.remove("on"); modalDateISO=null; }
+
+  function renderExisting(k){
+    var box=document.getElementById("existing");
+    var idx=buildIndex();
+    var info=idx[k];
+    var starting = state.brews.filter(function(b){return b.start===k;});
+    var goalsHere = state.goals.filter(function(g){return g.date===k;});
+    var covering = info? info.covers.filter(function(c){return c.brew.start!==k;}) : [];
+    var html="";
+    if(starting.length || goalsHere.length){
+      html+="<h4>On this day</h4>";
+      starting.forEach(function(b){
+        html+='<div class="brewrow"><span class="dot" style="background:'+b.color+'"></span>'+
+          '<span class="bn">🍺 '+escapeHTML(b.name)+'<small>ferments '+b.days+' days'+(b.collab?" · with "+escapeHTML(b.collab):"")+'</small></span>'+
+          '<button class="del" data-del-brew="'+b.id+'">✕</button></div>';
+      });
+      goalsHere.forEach(function(g){
+        html+='<div class="brewrow"><span class="dot" style="background:#ffd257"></span>'+
+          '<span class="bn">🎯 '+escapeHTML(g.text)+'</span>'+
+          '<button class="del" data-del-goal="'+g.id+'">✕</button></div>';
+      });
+    }
+    if(covering.length){
+      html+='<h4 style="margin-top:12px">Also fermenting</h4>';
+      covering.forEach(function(c){
+        html+='<div class="brewrow"><span class="dot" style="background:'+c.brew.color+'"></span>'+
+          '<span class="bn">'+(c.isReady?"🍺 ":"")+escapeHTML(c.brew.name)+'<small>started '+shortDate(toDate(parseISO(c.brew.start)))+(c.isReady?" · ready today":"")+'</small></span></div>';
+      });
+    }
+    if(!html) html='<div class="hint">Nothing here yet. Add a brew or goal above.</div>';
+    box.innerHTML=html;
+    box.querySelectorAll("[data-del-brew]").forEach(function(btn){
+      btn.addEventListener("click",function(){
+        var id=btn.getAttribute("data-del-brew");
+        state.brews=state.brews.filter(function(x){return x.id!==id;});
+        save(); renderAll(); renderExisting(k);
+      });
+    });
+    box.querySelectorAll("[data-del-goal]").forEach(function(btn){
+      btn.addEventListener("click",function(){
+        var id=btn.getAttribute("data-del-goal");
+        state.goals=state.goals.filter(function(x){return x.id!==id;});
+        save(); renderAll(); renderExisting(k);
+      });
+    });
+  }
+
+  // ---------- Publish (copy to clipboard) ----------
+  function publish(){
+    // bake current state into the embedded snapshot, then copy whole document
+    document.getElementById("app-data").textContent = JSON.stringify(state);
+    // ensure modal/overlay is closed in the snapshot
+    document.getElementById("overlay").classList.remove("on");
+    var html = "<!DOCTYPE html>\n" + document.documentElement.outerHTML;
+    copyText(html).then(function(ok){
+      if(ok) toast("📋 Copied! Paste into your GitHub file & commit.");
+      else fallbackCopy(html);
+    });
+  }
+  function copyText(txt){
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      return navigator.clipboard.writeText(txt).then(function(){return true;}).catch(function(){return false;});
+    }
+    return Promise.resolve(false);
+  }
+  function fallbackCopy(txt){
+    var ta=document.createElement("textarea"); ta.value=txt;
+    ta.style.position="fixed"; ta.style.opacity="0"; document.body.appendChild(ta); ta.select();
+    var ok=false; try{ ok=document.execCommand("copy"); }catch(e){}
+    document.body.removeChild(ta);
+    toast(ok?"📋 Copied to clipboard!":"Couldn't copy — try again");
+  }
+
+  // ---------- Helpers ----------
+  function escapeHTML(s){ return String(s).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];}); }
+  var toastTimer;
+  function toast(msg){
+    var t=document.getElementById("toast"); t.textContent=msg; t.classList.add("on");
+    clearTimeout(toastTimer); toastTimer=setTimeout(function(){t.classList.remove("on");},2600);
+  }
+
+  // ---------- Wire up ----------
+  function initColorSelect(){
+    var sel=document.getElementById("bColor"); sel.innerHTML="";
+    PALETTE.forEach(function(p,i){ var o=document.createElement("option"); o.value=p.c; o.textContent=p.name; sel.appendChild(o); });
+  }
+
+  document.getElementById("pickBrew").addEventListener("click",function(){
+    document.getElementById("brewForm").classList.remove("hidden");
+    document.getElementById("goalForm").classList.add("hidden");
+    document.getElementById("bName").focus();
+  });
+  document.getElementById("pickGoal").addEventListener("click",function(){
+    document.getElementById("goalForm").classList.remove("hidden");
+    document.getElementById("brewForm").classList.add("hidden");
+    document.getElementById("gText").focus();
+  });
+
+  document.getElementById("brewForm").addEventListener("submit",function(e){
+    e.preventDefault();
+    if(!modalDateISO) return;
+    var name=document.getElementById("bName").value.trim();
+    if(!name) return;
+    var days=Math.max(1, Math.min(120, parseInt(document.getElementById("bDays").value,10)||14));
+    var brew={ id:uid(), name:name, start:modalDateISO, days:days,
+      collab:document.getElementById("bCollab").value.trim(),
+      color:document.getElementById("bColor").value };
+    state.brews.push(brew); save(); renderAll();
+    toast("🍺 "+name+" added");
+    closeModal();
+  });
+
+  document.getElementById("goalForm").addEventListener("submit",function(e){
+    e.preventDefault();
+    if(!modalDateISO) return;
+    var text=document.getElementById("gText").value.trim();
+    if(!text) return;
+    state.goals.push({id:uid(), date:modalDateISO, text:text}); save(); renderAll();
+    toast("🎯 Goal added");
+    closeModal();
+  });
+
+  document.getElementById("modalClose").addEventListener("click",closeModal);
+  document.getElementById("overlay").addEventListener("click",function(e){ if(e.target===this) closeModal(); });
+  document.addEventListener("keydown",function(e){ if(e.key==="Escape") closeModal(); });
+
+  // side panel to-do
+  document.getElementById("catSeg").addEventListener("click",function(e){
+    var b=e.target.closest("button"); if(!b) return;
+    addCat=b.dataset.cat;
+    this.querySelectorAll("button").forEach(function(x){x.classList.toggle("on",x===b);});
+  });
+  function addTodo(){
+    var inp=document.getElementById("todoText"); var v=inp.value.trim();
+    if(!v) return;
+    state.todos.push({id:uid(), text:v, cat:addCat, done:false}); save(); renderTodos();
+    inp.value=""; inp.focus();
+  }
+  document.getElementById("todoAdd").addEventListener("click",addTodo);
+  document.getElementById("todoText").addEventListener("keydown",function(e){ if(e.key==="Enter") addTodo(); });
+
+  document.getElementById("pubBtn").addEventListener("click",publish);
+  document.getElementById("helpBtn").addEventListener("click",function(){ openModal(iso(EVENT.y,EVENT.m,1)); document.getElementById("pickBrew").click(); });
+
+  // ---------- Go ----------
+  initColorSelect();
+  renderCountdown();
+  renderAll();
+})();
+</script>
+
+
+</body></html>
