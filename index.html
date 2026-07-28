@@ -251,11 +251,11 @@
         <button class="btn" style="background:var(--accent);color:#fff;box-shadow:0 4px 0 rgba(0,0,0,.15)" id="todoAdd">Add</button>
       </div>
       <div class="seg" id="catSeg">
-        <button data-cat="goal" class="on">🎯 Goal</button>
-        <button data-cat="target">📈 Target</button>
-        <button data-cat="task">🔧 Task</button>
+        <button data-cat="goal" class="">🎯 Goal</button>
+        <button data-cat="target" class="">📈 Target</button>
+        <button data-cat="task" class="on">🔧 Task</button>
       </div>
-      <ul class="todo-list" id="todoList"><li class="empty">Nothing yet — add your first goal above ☝️</li></ul>
+      <ul class="todo-list" id="todoList"><li class="todo" data-cat="task"><input type="checkbox" class="chk"><div class="txt">Order plastic glasses</div><span class="tag">task</span><button class="del" title="Delete">✕</button></li><li class="todo" data-cat="task"><input type="checkbox" class="chk"><div class="txt">Move voting system online</div><span class="tag">task</span><button class="del" title="Delete">✕</button></li><li class="todo" data-cat="task"><input type="checkbox" class="chk"><div class="txt">Troubleshoot voting system and awards</div><span class="tag">task</span><button class="del" title="Delete">✕</button></li><li class="todo" data-cat="task"><input type="checkbox" class="chk"><div class="txt">Make introduction slideshow</div><span class="tag">task</span><button class="del" title="Delete">✕</button></li><li class="todo" data-cat="task"><input type="checkbox" class="chk"><div class="txt">Organise prizes and sponsors</div><span class="tag">task</span><button class="del" title="Delete">✕</button></li></ul>
     </div>
 
     <div class="card">
@@ -270,7 +270,7 @@
 <div class="overlay" id="overlay">
   <div class="modal">
     <div class="modal-hd">
-      <h3 id="modalDate">Day</h3>
+      <h3 id="modalDate">Saturday, August 1, 2026</h3>
       <span class="x" id="modalClose">✕</span>
     </div>
     <div class="modal-bd">
@@ -311,7 +311,7 @@
         <button type="submit" class="btn save" style="background:var(--grape)">Save goal</button>
       </form>
 
-      <div class="existing" id="existing"></div>
+      <div class="existing" id="existing"><div class="hint">Nothing here yet. Add a brew or goal above.</div></div>
     </div>
   </div>
 </div>
@@ -319,7 +319,7 @@
 <div class="toast" id="toast">📋 Copied! Paste into your GitHub file &amp; commit.</div>
 
 <!-- Embedded snapshot data (updated when you publish) -->
-<script id="app-data" type="application/json">{"brews":[],"goals":[],"todos":[]}</script>
+<script id="app-data" type="application/json">{"brews":[],"goals":[],"todos":[{"id":"ms56sg99dn4ei","text":"Order plastic glasses","cat":"task","done":false},{"id":"ms56slehvnupu","text":"Move voting system online","cat":"task","done":false},{"id":"ms56srixcqorc","text":"Troubleshoot voting system and awards","cat":"task","done":false},{"id":"ms56svi2yubvb","text":"Make introduction slideshow","cat":"task","done":false},{"id":"ms56t23ovnx45","text":"Organise prizes and sponsors","cat":"task","done":false}]}</script>
 
 <script>
 (function(){
