@@ -247,8 +247,8 @@
   <button class="btn btn-ghost" id="helpBtn">＋ New brew</button>
   <button class="btn btn-ghost" id="copyBtn" title="Copy the full HTML to paste manually">📋 Copy</button>
   <button class="btn btn-ghost" id="settingsBtn" title="GitHub publish settings">⚙</button>
-  <button class="btn btn-pub busy" id="pubBtn"><span class="spin">⏳</span> Publishing…</button>
-  <div class="lastpub" id="lastPub" title="Last publish to GitHub">📤 Published Jul 30, 2026, 5:43 PM</div>
+  <button class="btn btn-pub" id="pubBtn">⬆ Publish</button>
+  <div class="lastpub" id="lastPub" title="Last publish to GitHub">📤 Published Jul 30, 2026, 5:47 PM</div>
 </header>
 
 <div class="wrap">
@@ -802,8 +802,13 @@
     document.getElementById("overlay").classList.remove("on");
     document.getElementById("settingsOverlay").classList.remove("on");
     var t=document.getElementById("ghToken"); var keep=t.value; t.value=""; t.removeAttribute("value");
+    // never bake in the transient "Publishing…" button state
+    var pub=document.getElementById("pubBtn");
+    var pubHTML=pub.innerHTML, pubBusy=pub.classList.contains("busy");
+    pub.classList.remove("busy"); pub.textContent="⬆ Publish";
     var html = "<!DOCTYPE html>\n" + document.documentElement.outerHTML;
     t.value=keep;
+    pub.innerHTML=pubHTML; if(pubBusy) pub.classList.add("busy");
     return html;
   }
 
@@ -1009,6 +1014,7 @@
 
   // ---------- Go ----------
   initColorSelect();
+  setBusy(document.getElementById("pubBtn"), false, "⬆ Publish");  // self-heal if an old snapshot froze it
   renderCountdown();
   renderLastPub();
   renderAll();
