@@ -65,6 +65,10 @@
   .btn-pub{background:#fff;color:#ff5a3c;box-shadow:0 4px 0 rgba(0,0,0,.18)}
   .btn-pub:active{box-shadow:0 2px 0 rgba(0,0,0,.18)}
   .btn-ghost{background:rgba(255,255,255,.16);color:#fff;border:2px solid rgba(255,255,255,.55)}
+  .lastpub{font-family:'Nunito',sans-serif;font-weight:800;font-size:11.5px;color:#fff;
+    background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.4);border-radius:999px;
+    padding:5px 11px;white-space:nowrap}
+  .lastpub:empty{display:none}
 
   /* ---------- Layout ---------- */
   .wrap{display:flex;gap:22px;align-items:flex-start;padding:22px;max-width:1500px;margin:0 auto}
@@ -82,7 +86,7 @@
   .swatch{width:14px;height:14px;border-radius:4px;display:inline-block}
 
   /* ---------- Months ---------- */
-  .months{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:20px}
+  .months{display:grid;grid-template-columns:1fr;gap:20px}
   .month{
     background:var(--cream);border:2px solid var(--line);border-radius:var(--radius);
     box-shadow:var(--shadow);overflow:hidden;
@@ -97,16 +101,16 @@
   .dow{display:grid;grid-template-columns:repeat(7,1fr);background:#f3ecdd;color:#8a7f6d;
     font-weight:800;font-size:11px;text-transform:uppercase;letter-spacing:.5px}
   .dow div{padding:6px 0;text-align:center}
-  .grid{display:grid;grid-template-columns:repeat(7,1fr)}
+  .grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr))}
   .cell{
-    min-height:74px;border-right:1px solid #efe7d7;border-bottom:1px solid #efe7d7;
+    min-height:78px;border-right:1px solid #efe7d7;border-bottom:1px solid #efe7d7;
     padding:4px 4px 5px;position:relative;cursor:pointer;transition:background .1s;
-    display:flex;flex-direction:column;gap:2px;
+    display:flex;flex-direction:column;gap:2px;min-width:0;
   }
   .cell:nth-child(7n){border-right:none}
   .cell.blank{background:#faf5ea;cursor:default}
   .cell:not(.blank):hover{background:#fff3e2}
-  .cell .num{font-weight:800;font-size:13px;color:#9a8f7d;line-height:1}
+  .cell .num{font-weight:800;font-size:12px;color:#9a8f7d;line-height:1}
   .cell.today .num{color:#fff;background:var(--sky);border-radius:999px;width:20px;height:20px;
     display:flex;align-items:center;justify-content:center;font-size:11px}
   .cell.eventday{background:linear-gradient(160deg,#ffe1ea,#fff)}
@@ -116,16 +120,17 @@
     background:var(--event);border-radius:6px;padding:2px 5px;text-align:center;line-height:1.15;
   }
   .bar{
-    font-size:10.5px;font-weight:800;color:#fff;border-radius:5px;padding:2px 5px;
-    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.25;
+    font-size:9.5px;font-weight:800;color:#fff;border-radius:5px;padding:2px 5px;
+    line-height:1.2;overflow-wrap:anywhere;word-break:break-word;
     box-shadow:inset 0 -1px 0 rgba(0,0,0,.12);
   }
   .bar.ready{outline:2px solid #fff;box-shadow:0 0 0 2px rgba(0,0,0,.08)}
   .goal-chip{
-    font-size:10.5px;font-weight:800;color:#7a5a00;background:#ffe08a;border:1px solid #f0c34a;
-    border-radius:5px;padding:2px 5px;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
-    display:flex;align-items:center;gap:3px;
+    font-size:9.5px;font-weight:800;color:#7a5a00;background:#ffe08a;border:1px solid #f0c34a;
+    border-radius:5px;padding:2px 5px;line-height:1.2;
+    display:flex;align-items:flex-start;gap:3px;
   }
+  .goal-chip span{overflow-wrap:anywhere;word-break:break-word;min-width:0}
   .more{font-size:10px;font-weight:800;color:#a99;padding-left:3px}
 
   /* ---------- Side panel ---------- */
@@ -218,6 +223,12 @@
   .existing h4{margin:0 0 8px;font-size:13px;color:#8a7f6d;text-transform:uppercase;letter-spacing:.5px}
   .hint{font-size:12px;color:#a99;font-weight:700}
   .hidden{display:none!important}
+  .token-note{font-size:12px;color:#8a7f6d;font-weight:600;line-height:1.45;background:#fff6e6;
+    border:1px solid #f0e2c2;border-radius:10px;padding:9px 11px;margin:4px 0 10px}
+  .token-note a{color:var(--grape);font-weight:800}
+  .btn.busy{opacity:.7;pointer-events:none}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .spin{display:inline-block;animation:spin .8s linear infinite}
 
   .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(30px);
     background:var(--ink);color:#fff;font-weight:800;font-family:'Baloo 2',cursive;
@@ -231,10 +242,13 @@
 
 <header>
   <div class="logo"><span class="mug">🍺</span> BrewCon Countdown</div>
-  <div class="countdown" id="countdown"><span class="big">101</span><span class="lbl">days to BrewCon</span></div>
+  <div class="countdown" id="countdown"><span class="big">100</span><span class="lbl">days to BrewCon</span></div>
   <div class="spacer"></div>
   <button class="btn btn-ghost" id="helpBtn">＋ New brew</button>
-  <button class="btn btn-pub" id="pubBtn">⬆ Update to GitHub</button>
+  <button class="btn btn-ghost" id="copyBtn" title="Copy the full HTML to paste manually">📋 Copy</button>
+  <button class="btn btn-ghost" id="settingsBtn" title="GitHub publish settings">⚙</button>
+  <button class="btn btn-pub busy" id="pubBtn"><span class="spin">⏳</span> Publishing…</button>
+  <div class="lastpub" id="lastPub" title="Last publish to GitHub">📤 Published Jul 30, 2026, 5:43 PM</div>
 </header>
 
 <div class="wrap">
@@ -249,7 +263,7 @@
         <span><i class="swatch" style="background:var(--event)"></i> Event</span>
       </div>
     </div>
-    <div class="months" id="months"><div class="month"><div class="month-hd"><span>July 2026</span></div><div class="dow"><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div><div>Sun</div></div><div class="grid"><div class="cell blank"></div><div class="cell blank"></div><div class="cell" data-iso="2026-07-01"><div class="num">1</div></div><div class="cell" data-iso="2026-07-02"><div class="num">2</div></div><div class="cell" data-iso="2026-07-03"><div class="num">3</div></div><div class="cell" data-iso="2026-07-04"><div class="num">4</div></div><div class="cell" data-iso="2026-07-05"><div class="num">5</div></div><div class="cell" data-iso="2026-07-06"><div class="num">6</div></div><div class="cell" data-iso="2026-07-07"><div class="num">7</div></div><div class="cell" data-iso="2026-07-08"><div class="num">8</div></div><div class="cell" data-iso="2026-07-09"><div class="num">9</div></div><div class="cell" data-iso="2026-07-10"><div class="num">10</div></div><div class="cell" data-iso="2026-07-11"><div class="num">11</div></div><div class="cell" data-iso="2026-07-12"><div class="num">12</div></div><div class="cell" data-iso="2026-07-13"><div class="num">13</div></div><div class="cell" data-iso="2026-07-14"><div class="num">14</div></div><div class="cell" data-iso="2026-07-15"><div class="num">15</div></div><div class="cell" data-iso="2026-07-16"><div class="num">16</div></div><div class="cell" data-iso="2026-07-17"><div class="num">17</div></div><div class="cell" data-iso="2026-07-18"><div class="num">18</div></div><div class="cell" data-iso="2026-07-19"><div class="num">19</div></div><div class="cell" data-iso="2026-07-20"><div class="num">20</div></div><div class="cell" data-iso="2026-07-21"><div class="num">21</div></div><div class="cell" data-iso="2026-07-22"><div class="num">22</div></div><div class="cell" data-iso="2026-07-23"><div class="num">23</div></div><div class="cell" data-iso="2026-07-24"><div class="num">24</div></div><div class="cell" data-iso="2026-07-25"><div class="num">25</div></div><div class="cell" data-iso="2026-07-26"><div class="num">26</div></div><div class="cell" data-iso="2026-07-27"><div class="num">27</div></div><div class="cell" data-iso="2026-07-28"><div class="num">28</div></div><div class="cell today" data-iso="2026-07-29"><div class="num">29</div></div><div class="cell" data-iso="2026-07-30"><div class="num">30</div></div><div class="cell" data-iso="2026-07-31"><div class="num">31</div></div></div></div><div class="month"><div class="month-hd"><span>August 2026</span></div><div class="dow"><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div><div>Sun</div></div><div class="grid"><div class="cell blank"></div><div class="cell blank"></div><div class="cell blank"></div><div class="cell blank"></div><div class="cell blank"></div><div class="cell" data-iso="2026-08-01"><div class="num">1</div></div><div class="cell" data-iso="2026-08-02"><div class="num">2</div></div><div class="cell" data-iso="2026-08-03"><div class="num">3</div></div><div class="cell" data-iso="2026-08-04"><div class="num">4</div></div><div class="cell" data-iso="2026-08-05"><div class="num">5</div></div><div class="cell" data-iso="2026-08-06"><div class="num">6</div></div><div class="cell" data-iso="2026-08-07"><div class="num">7</div></div><div class="cell" data-iso="2026-08-08"><div class="num">8</div></div><div class="cell" data-iso="2026-08-09"><div class="num">9</div></div><div class="cell" data-iso="2026-08-10"><div class="num">10</div></div><div class="cell" data-iso="2026-08-11"><div class="num">11</div></div><div class="cell" data-iso="2026-08-12"><div class="num">12</div></div><div class="cell" data-iso="2026-08-13"><div class="num">13</div></div><div class="cell" data-iso="2026-08-14"><div class="num">14</div></div><div class="cell" data-iso="2026-08-15"><div class="num">15</div></div><div class="cell" data-iso="2026-08-16"><div class="num">16</div></div><div class="cell" data-iso="2026-08-17"><div class="num">17</div></div><div class="cell" data-iso="2026-08-18"><div class="num">18</div></div><div class="cell" data-iso="2026-08-19"><div class="num">19</div></div><div class="cell" data-iso="2026-08-20"><div class="num">20</div></div><div class="cell" data-iso="2026-08-21"><div class="num">21</div></div><div class="cell" data-iso="2026-08-22"><div class="num">22</div></div><div class="cell" data-iso="2026-08-23"><div class="num">23</div></div><div class="cell" data-iso="2026-08-24"><div class="num">24</div></div><div class="cell" data-iso="2026-08-25"><div class="num">25</div></div><div class="cell" data-iso="2026-08-26"><div class="num">26</div></div><div class="cell" data-iso="2026-08-27"><div class="num">27</div></div><div class="cell" data-iso="2026-08-28"><div class="num">28</div></div><div class="cell" data-iso="2026-08-29"><div class="num">29</div></div><div class="cell" data-iso="2026-08-30"><div class="num">30</div></div><div class="cell" data-iso="2026-08-31"><div class="num">31</div></div></div></div><div class="month"><div class="month-hd"><span>September 2026</span></div><div class="dow"><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div><div>Sun</div></div><div class="grid"><div class="cell blank"></div><div class="cell" data-iso="2026-09-01"><div class="num">1</div></div><div class="cell" data-iso="2026-09-02"><div class="num">2</div></div><div class="cell" data-iso="2026-09-03"><div class="num">3</div></div><div class="cell" data-iso="2026-09-04"><div class="num">4</div></div><div class="cell" data-iso="2026-09-05"><div class="num">5</div></div><div class="cell" data-iso="2026-09-06"><div class="num">6</div></div><div class="cell" data-iso="2026-09-07"><div class="num">7</div></div><div class="cell" data-iso="2026-09-08"><div class="num">8</div></div><div class="cell" data-iso="2026-09-09"><div class="num">9</div></div><div class="cell" data-iso="2026-09-10"><div class="num">10</div></div><div class="cell" data-iso="2026-09-11"><div class="num">11</div></div><div class="cell" data-iso="2026-09-12"><div class="num">12</div></div><div class="cell" data-iso="2026-09-13"><div class="num">13</div></div><div class="cell" data-iso="2026-09-14"><div class="num">14</div></div><div class="cell" data-iso="2026-09-15"><div class="num">15</div></div><div class="cell" data-iso="2026-09-16"><div class="num">16</div></div><div class="cell" data-iso="2026-09-17"><div class="num">17</div></div><div class="cell" data-iso="2026-09-18"><div class="num">18</div></div><div class="cell" data-iso="2026-09-19"><div class="num">19</div></div><div class="cell" data-iso="2026-09-20"><div class="num">20</div></div><div class="cell" data-iso="2026-09-21"><div class="num">21</div></div><div class="cell" data-iso="2026-09-22"><div class="num">22</div></div><div class="cell" data-iso="2026-09-23"><div class="num">23</div></div><div class="cell" data-iso="2026-09-24"><div class="num">24</div></div><div class="cell" data-iso="2026-09-25"><div class="num">25</div></div><div class="cell" data-iso="2026-09-26"><div class="num">26</div></div><div class="cell" data-iso="2026-09-27"><div class="num">27</div></div><div class="cell" data-iso="2026-09-28"><div class="num">28</div></div><div class="cell" data-iso="2026-09-29"><div class="num">29</div></div><div class="cell" data-iso="2026-09-30"><div class="num">30</div></div></div></div><div class="month"><div class="month-hd"><span>October 2026</span></div><div class="dow"><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div><div>Sun</div></div><div class="grid"><div class="cell blank"></div><div class="cell blank"></div><div class="cell blank"></div><div class="cell" data-iso="2026-10-01"><div class="num">1</div></div><div class="cell" data-iso="2026-10-02"><div class="num">2</div></div><div class="cell" data-iso="2026-10-03"><div class="num">3</div></div><div class="cell" data-iso="2026-10-04"><div class="num">4</div></div><div class="cell" data-iso="2026-10-05"><div class="num">5</div></div><div class="cell" data-iso="2026-10-06"><div class="num">6</div></div><div class="cell" data-iso="2026-10-07"><div class="num">7</div></div><div class="cell" data-iso="2026-10-08"><div class="num">8</div></div><div class="cell" data-iso="2026-10-09"><div class="num">9</div></div><div class="cell" data-iso="2026-10-10"><div class="num">10</div></div><div class="cell" data-iso="2026-10-11"><div class="num">11</div></div><div class="cell" data-iso="2026-10-12"><div class="num">12</div></div><div class="cell" data-iso="2026-10-13"><div class="num">13</div></div><div class="cell" data-iso="2026-10-14"><div class="num">14</div></div><div class="cell" data-iso="2026-10-15"><div class="num">15</div></div><div class="cell" data-iso="2026-10-16"><div class="num">16</div></div><div class="cell" data-iso="2026-10-17"><div class="num">17</div></div><div class="cell" data-iso="2026-10-18"><div class="num">18</div></div><div class="cell" data-iso="2026-10-19"><div class="num">19</div></div><div class="cell" data-iso="2026-10-20"><div class="num">20</div></div><div class="cell" data-iso="2026-10-21"><div class="num">21</div></div><div class="cell" data-iso="2026-10-22"><div class="num">22</div></div><div class="cell" data-iso="2026-10-23"><div class="num">23</div></div><div class="cell" data-iso="2026-10-24"><div class="num">24</div></div><div class="cell" data-iso="2026-10-25"><div class="num">25</div></div><div class="cell" data-iso="2026-10-26"><div class="num">26</div></div><div class="cell" data-iso="2026-10-27"><div class="num">27</div></div><div class="cell" data-iso="2026-10-28"><div class="num">28</div></div><div class="cell" data-iso="2026-10-29"><div class="num">29</div></div><div class="cell" data-iso="2026-10-30"><div class="num">30</div></div><div class="cell" data-iso="2026-10-31"><div class="num">31</div></div></div></div><div class="month hasEvent"><div class="month-hd"><span>November 2026</span><span>🎉 BrewCon!</span></div><div class="dow"><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div><div>Sun</div></div><div class="grid"><div class="cell blank"></div><div class="cell blank"></div><div class="cell blank"></div><div class="cell blank"></div><div class="cell blank"></div><div class="cell blank"></div><div class="cell" data-iso="2026-11-01"><div class="num">1</div></div><div class="cell" data-iso="2026-11-02"><div class="num">2</div></div><div class="cell" data-iso="2026-11-03"><div class="num">3</div></div><div class="cell" data-iso="2026-11-04"><div class="num">4</div></div><div class="cell" data-iso="2026-11-05"><div class="num">5</div></div><div class="cell" data-iso="2026-11-06"><div class="num">6</div></div><div class="cell eventday" data-iso="2026-11-07"><div class="num">7</div><div class="event-flag">🎉 BREWCON</div></div><div class="cell" data-iso="2026-11-08"><div class="num">8</div></div><div class="cell" data-iso="2026-11-09"><div class="num">9</div></div><div class="cell" data-iso="2026-11-10"><div class="num">10</div></div><div class="cell" data-iso="2026-11-11"><div class="num">11</div></div><div class="cell" data-iso="2026-11-12"><div class="num">12</div></div><div class="cell" data-iso="2026-11-13"><div class="num">13</div></div><div class="cell" data-iso="2026-11-14"><div class="num">14</div></div><div class="cell" data-iso="2026-11-15"><div class="num">15</div></div><div class="cell" data-iso="2026-11-16"><div class="num">16</div></div><div class="cell" data-iso="2026-11-17"><div class="num">17</div></div><div class="cell" data-iso="2026-11-18"><div class="num">18</div></div><div class="cell" data-iso="2026-11-19"><div class="num">19</div></div><div class="cell" data-iso="2026-11-20"><div class="num">20</div></div><div class="cell" data-iso="2026-11-21"><div class="num">21</div></div><div class="cell" data-iso="2026-11-22"><div class="num">22</div></div><div class="cell" data-iso="2026-11-23"><div class="num">23</div></div><div class="cell" data-iso="2026-11-24"><div class="num">24</div></div><div class="cell" data-iso="2026-11-25"><div class="num">25</div></div><div class="cell" data-iso="2026-11-26"><div class="num">26</div></div><div class="cell" data-iso="2026-11-27"><div class="num">27</div></div><div class="cell" data-iso="2026-11-28"><div class="num">28</div></div><div class="cell" data-iso="2026-11-29"><div class="num">29</div></div><div class="cell" data-iso="2026-11-30"><div class="num">30</div></div></div></div></div>
+    <div class="months" id="months"><div class="month"><div class="month-hd"><span>August 2026</span></div><div class="dow"><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div><div>Sun</div></div><div class="grid"><div class="cell blank"></div><div class="cell blank"></div><div class="cell blank"></div><div class="cell blank"></div><div class="cell blank"></div><div class="cell" data-iso="2026-08-01"><div class="num">1</div><div class="bar" title="Johnnys Cup of Fluff · with Kayla" style="background: rgb(255, 122, 77);">Johnnys Cup of Fluff · 🤝 Kayla</div></div><div class="cell" data-iso="2026-08-02"><div class="num">2</div><div class="bar" title="Johnnys Cup of Fluff · with Kayla" style="background: rgb(255, 122, 77);">Johnnys Cup of Fluff · 🤝 Kayla</div></div><div class="cell" data-iso="2026-08-03"><div class="num">3</div><div class="bar" title="Johnnys Cup of Fluff · with Kayla" style="background: rgb(255, 122, 77);">Johnnys Cup of Fluff · 🤝 Kayla</div></div><div class="cell" data-iso="2026-08-04"><div class="num">4</div><div class="bar" title="Johnnys Cup of Fluff · with Kayla" style="background: rgb(255, 122, 77);">Johnnys Cup of Fluff · 🤝 Kayla</div></div><div class="cell" data-iso="2026-08-05"><div class="num">5</div><div class="bar" title="Johnnys Cup of Fluff · with Kayla" style="background: rgb(255, 122, 77);">Johnnys Cup of Fluff · 🤝 Kayla</div></div><div class="cell" data-iso="2026-08-06"><div class="num">6</div><div class="bar" title="Johnnys Cup of Fluff · with Kayla" style="background: rgb(255, 122, 77);">Johnnys Cup of Fluff · 🤝 Kayla</div></div><div class="cell" data-iso="2026-08-07"><div class="num">7</div><div class="bar" title="Johnnys Cup of Fluff · with Kayla" style="background: rgb(255, 122, 77);">Johnnys Cup of Fluff · 🤝 Kayla</div></div><div class="cell" data-iso="2026-08-08"><div class="num">8</div><div class="bar" title="Johnnys Cup of Fluff · with Kayla" style="background: rgb(255, 122, 77);">Johnnys Cup of Fluff · 🤝 Kayla</div></div><div class="cell" data-iso="2026-08-09"><div class="num">9</div><div class="bar ready" title="Johnnys Cup of Fluff · with Kayla" style="background: rgb(255, 122, 77);">🍺 Johnnys Cup of Fluff · 🤝 Kayla</div></div><div class="cell" data-iso="2026-08-10"><div class="num">10</div></div><div class="cell" data-iso="2026-08-11"><div class="num">11</div></div><div class="cell" data-iso="2026-08-12"><div class="num">12</div></div><div class="cell" data-iso="2026-08-13"><div class="num">13</div></div><div class="cell" data-iso="2026-08-14"><div class="num">14</div></div><div class="cell" data-iso="2026-08-15"><div class="num">15</div></div><div class="cell" data-iso="2026-08-16"><div class="num">16</div></div><div class="cell" data-iso="2026-08-17"><div class="num">17</div></div><div class="cell" data-iso="2026-08-18"><div class="num">18</div></div><div class="cell" data-iso="2026-08-19"><div class="num">19</div></div><div class="cell" data-iso="2026-08-20"><div class="num">20</div></div><div class="cell" data-iso="2026-08-21"><div class="num">21</div></div><div class="cell" data-iso="2026-08-22"><div class="num">22</div></div><div class="cell" data-iso="2026-08-23"><div class="num">23</div></div><div class="cell" data-iso="2026-08-24"><div class="num">24</div></div><div class="cell" data-iso="2026-08-25"><div class="num">25</div></div><div class="cell" data-iso="2026-08-26"><div class="num">26</div></div><div class="cell" data-iso="2026-08-27"><div class="num">27</div></div><div class="cell" data-iso="2026-08-28"><div class="num">28</div></div><div class="cell" data-iso="2026-08-29"><div class="num">29</div></div><div class="cell" data-iso="2026-08-30"><div class="num">30</div></div><div class="cell" data-iso="2026-08-31"><div class="num">31</div></div></div></div><div class="month"><div class="month-hd"><span>September 2026</span></div><div class="dow"><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div><div>Sun</div></div><div class="grid"><div class="cell blank"></div><div class="cell" data-iso="2026-09-01"><div class="num">1</div></div><div class="cell" data-iso="2026-09-02"><div class="num">2</div></div><div class="cell" data-iso="2026-09-03"><div class="num">3</div></div><div class="cell" data-iso="2026-09-04"><div class="num">4</div></div><div class="cell" data-iso="2026-09-05"><div class="num">5</div></div><div class="cell" data-iso="2026-09-06"><div class="num">6</div></div><div class="cell" data-iso="2026-09-07"><div class="num">7</div></div><div class="cell" data-iso="2026-09-08"><div class="num">8</div></div><div class="cell" data-iso="2026-09-09"><div class="num">9</div></div><div class="cell" data-iso="2026-09-10"><div class="num">10</div></div><div class="cell" data-iso="2026-09-11"><div class="num">11</div></div><div class="cell" data-iso="2026-09-12"><div class="num">12</div></div><div class="cell" data-iso="2026-09-13"><div class="num">13</div></div><div class="cell" data-iso="2026-09-14"><div class="num">14</div></div><div class="cell" data-iso="2026-09-15"><div class="num">15</div></div><div class="cell" data-iso="2026-09-16"><div class="num">16</div></div><div class="cell" data-iso="2026-09-17"><div class="num">17</div></div><div class="cell" data-iso="2026-09-18"><div class="num">18</div></div><div class="cell" data-iso="2026-09-19"><div class="num">19</div></div><div class="cell" data-iso="2026-09-20"><div class="num">20</div></div><div class="cell" data-iso="2026-09-21"><div class="num">21</div></div><div class="cell" data-iso="2026-09-22"><div class="num">22</div></div><div class="cell" data-iso="2026-09-23"><div class="num">23</div></div><div class="cell" data-iso="2026-09-24"><div class="num">24</div></div><div class="cell" data-iso="2026-09-25"><div class="num">25</div></div><div class="cell" data-iso="2026-09-26"><div class="num">26</div></div><div class="cell" data-iso="2026-09-27"><div class="num">27</div></div><div class="cell" data-iso="2026-09-28"><div class="num">28</div></div><div class="cell" data-iso="2026-09-29"><div class="num">29</div></div><div class="cell" data-iso="2026-09-30"><div class="num">30</div></div></div></div><div class="month"><div class="month-hd"><span>October 2026</span></div><div class="dow"><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div><div>Sun</div></div><div class="grid"><div class="cell blank"></div><div class="cell blank"></div><div class="cell blank"></div><div class="cell" data-iso="2026-10-01"><div class="num">1</div></div><div class="cell" data-iso="2026-10-02"><div class="num">2</div></div><div class="cell" data-iso="2026-10-03"><div class="num">3</div></div><div class="cell" data-iso="2026-10-04"><div class="num">4</div></div><div class="cell" data-iso="2026-10-05"><div class="num">5</div></div><div class="cell" data-iso="2026-10-06"><div class="num">6</div></div><div class="cell" data-iso="2026-10-07"><div class="num">7</div></div><div class="cell" data-iso="2026-10-08"><div class="num">8</div></div><div class="cell" data-iso="2026-10-09"><div class="num">9</div></div><div class="cell" data-iso="2026-10-10"><div class="num">10</div></div><div class="cell" data-iso="2026-10-11"><div class="num">11</div></div><div class="cell" data-iso="2026-10-12"><div class="num">12</div></div><div class="cell" data-iso="2026-10-13"><div class="num">13</div></div><div class="cell" data-iso="2026-10-14"><div class="num">14</div></div><div class="cell" data-iso="2026-10-15"><div class="num">15</div></div><div class="cell" data-iso="2026-10-16"><div class="num">16</div></div><div class="cell" data-iso="2026-10-17"><div class="num">17</div></div><div class="cell" data-iso="2026-10-18"><div class="num">18</div></div><div class="cell" data-iso="2026-10-19"><div class="num">19</div></div><div class="cell" data-iso="2026-10-20"><div class="num">20</div></div><div class="cell" data-iso="2026-10-21"><div class="num">21</div></div><div class="cell" data-iso="2026-10-22"><div class="num">22</div></div><div class="cell" data-iso="2026-10-23"><div class="num">23</div></div><div class="cell" data-iso="2026-10-24"><div class="num">24</div></div><div class="cell" data-iso="2026-10-25"><div class="num">25</div></div><div class="cell" data-iso="2026-10-26"><div class="num">26</div></div><div class="cell" data-iso="2026-10-27"><div class="num">27</div></div><div class="cell" data-iso="2026-10-28"><div class="num">28</div></div><div class="cell" data-iso="2026-10-29"><div class="num">29</div></div><div class="cell" data-iso="2026-10-30"><div class="num">30</div></div><div class="cell" data-iso="2026-10-31"><div class="num">31</div></div></div></div><div class="month hasEvent"><div class="month-hd"><span>November 2026</span><span>🎉 BrewCon!</span></div><div class="dow"><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div><div>Sun</div></div><div class="grid"><div class="cell blank"></div><div class="cell blank"></div><div class="cell blank"></div><div class="cell blank"></div><div class="cell blank"></div><div class="cell blank"></div><div class="cell" data-iso="2026-11-01"><div class="num">1</div></div><div class="cell" data-iso="2026-11-02"><div class="num">2</div></div><div class="cell" data-iso="2026-11-03"><div class="num">3</div></div><div class="cell" data-iso="2026-11-04"><div class="num">4</div></div><div class="cell" data-iso="2026-11-05"><div class="num">5</div></div><div class="cell" data-iso="2026-11-06"><div class="num">6</div></div><div class="cell eventday" data-iso="2026-11-07"><div class="num">7</div><div class="event-flag">🎉 BREWCON</div></div><div class="cell" data-iso="2026-11-08"><div class="num">8</div></div><div class="cell" data-iso="2026-11-09"><div class="num">9</div></div><div class="cell" data-iso="2026-11-10"><div class="num">10</div></div><div class="cell" data-iso="2026-11-11"><div class="num">11</div></div><div class="cell" data-iso="2026-11-12"><div class="num">12</div></div><div class="cell" data-iso="2026-11-13"><div class="num">13</div></div><div class="cell" data-iso="2026-11-14"><div class="num">14</div></div><div class="cell" data-iso="2026-11-15"><div class="num">15</div></div><div class="cell" data-iso="2026-11-16"><div class="num">16</div></div><div class="cell" data-iso="2026-11-17"><div class="num">17</div></div><div class="cell" data-iso="2026-11-18"><div class="num">18</div></div><div class="cell" data-iso="2026-11-19"><div class="num">19</div></div><div class="cell" data-iso="2026-11-20"><div class="num">20</div></div><div class="cell" data-iso="2026-11-21"><div class="num">21</div></div><div class="cell" data-iso="2026-11-22"><div class="num">22</div></div><div class="cell" data-iso="2026-11-23"><div class="num">23</div></div><div class="cell" data-iso="2026-11-24"><div class="num">24</div></div><div class="cell" data-iso="2026-11-25"><div class="num">25</div></div><div class="cell" data-iso="2026-11-26"><div class="num">26</div></div><div class="cell" data-iso="2026-11-27"><div class="num">27</div></div><div class="cell" data-iso="2026-11-28"><div class="num">28</div></div><div class="cell" data-iso="2026-11-29"><div class="num">29</div></div><div class="cell" data-iso="2026-11-30"><div class="num">30</div></div></div></div></div>
     <footer>Click any day to add a brew or a BrewCon goal · Data saved in this browser</footer>
   </div>
 
@@ -273,14 +287,14 @@
 
     <div class="card">
       <h3>🍻 Brews</h3>
-      <div class="sub" id="brewCount">No brews planned yet.</div>
-      <div id="brewList"></div>
+      <div class="sub" id="brewCount">1 brew planned.</div>
+      <div id="brewList"><div class="brewrow"><div class="dot" style="background: rgb(255, 122, 77);"></div><div class="bn">Johnnys Cup of Fluff<small>Aug 1 → 🍺 Aug 9 (8d) · with Kayla</small></div><button class="edit" title="Edit brew">✎</button><button class="del" title="Delete brew">✕</button></div></div>
     </div>
 
     <div class="card">
       <h3>🤝 Collaborators</h3>
-      <div class="sub" id="collabSub">No collab brews yet.</div>
-      <div id="collabList"></div>
+      <div class="sub" id="collabSub">1 collaborator · 1 collab brew</div>
+      <div id="collabList"><div class="collabrow"><div class="avatar" style="background: rgb(255, 122, 77);">K</div><div class="cn">Kayla<small title="Johnnys Cup of Fluff">Johnnys Cup of Fluff</small></div><div class="cbadge" title="1 collab brew">1</div></div></div>
     </div>
   </div>
 </div>
@@ -289,7 +303,7 @@
 <div class="overlay" id="overlay">
   <div class="modal">
     <div class="modal-hd">
-      <h3 id="modalDate">Tuesday, August 4, 2026</h3>
+      <h3 id="modalDate">Day</h3>
       <span class="x" id="modalClose">✕</span>
     </div>
     <div class="modal-bd">
@@ -324,7 +338,7 @@
             <input type="text" id="bCollab" placeholder="Who with?" maxlength="60">
           </div>
         </div>
-        <button type="submit" class="btn save" id="brewSaveBtn">Update brew</button>
+        <button type="submit" class="btn save" id="brewSaveBtn">Save brew</button>
       </form>
 
       <!-- Goal form -->
@@ -336,15 +350,46 @@
         <button type="submit" class="btn save" style="background:var(--grape)">Save goal</button>
       </form>
 
-      <div class="existing" id="existing"><div class="hint">Nothing here yet. Add a brew or goal above.</div></div>
+      <div class="existing" id="existing"></div>
     </div>
   </div>
 </div>
 
-<div class="toast" id="toast">🍺 Tester added</div>
+<!-- Settings modal -->
+<div class="overlay" id="settingsOverlay">
+  <div class="modal">
+    <div class="modal-hd" style="background:linear-gradient(100deg,var(--grape),var(--sky))">
+      <h3>⚙ GitHub Publish Settings</h3>
+      <span class="x" id="settingsClose">✕</span>
+    </div>
+    <div class="modal-bd">
+      <div class="row2">
+        <div class="field"><label>Owner / username</label><input type="text" id="ghOwner" placeholder="your-username"></div>
+        <div class="field"><label>Repository</label><input type="text" id="ghRepo" placeholder="repo-name"></div>
+      </div>
+      <div class="row2">
+        <div class="field"><label>Branch</label><input type="text" id="ghBranch" placeholder="main"></div>
+        <div class="field"><label>File path</label><input type="text" id="ghPath" placeholder="index.html"></div>
+      </div>
+      <div class="field">
+        <label>Personal access token</label>
+        <input type="password" id="ghToken" placeholder="ghp_… or github_pat_…" autocomplete="off" spellcheck="false">
+      </div>
+      <div class="token-note">
+        🔒 Stored only in this browser, in its own key — <b>never</b> written into the published file.
+        Use a <b>fine-grained token</b> limited to this one repo with <b>Contents: read &amp; write</b>.
+        <a href="https://github.com/settings/tokens?type=beta" target="_blank" rel="noopener">Create one ↗</a>
+      </div>
+      <button type="button" class="btn save" id="settingsSave" style="background:var(--grape)">Save settings</button>
+      <div id="settingsStatus" class="hint" style="margin-top:8px;text-align:center"></div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
 
 <!-- Embedded snapshot data (updated when you publish) -->
-<script id="app-data" type="application/json">{"brews":[],"goals":[],"todos":[{"id":"ms56sg99dn4ei","text":"Order plastic glasses","cat":"task","done":false},{"id":"ms56slehvnupu","text":"Move voting system online","cat":"task","done":false},{"id":"ms56srixcqorc","text":"Troubleshoot voting system and awards","cat":"task","done":false},{"id":"ms56svi2yubvb","text":"Make introduction slideshow","cat":"task","done":false},{"id":"ms56t23ovnx45","text":"Organise prizes and sponsors","cat":"task","done":false}]}</script>
+<script id="app-data" type="application/json">{"brews":[{"id":"ms775qnlamw3g","name":"Johnnys Cup of Fluff","start":"2026-08-01","days":8,"collab":"Kayla","color":"#ff7a4d"}],"goals":[],"todos":[{"id":"ms56sg99dn4ei","text":"Order plastic glasses","cat":"task","done":false},{"id":"ms56slehvnupu","text":"Move voting system online","cat":"task","done":false},{"id":"ms56srixcqorc","text":"Troubleshoot voting system and awards","cat":"task","done":false},{"id":"ms56svi2yubvb","text":"Make introduction slideshow","cat":"task","done":false},{"id":"ms56t23ovnx45","text":"Organise prizes and sponsors","cat":"task","done":false}]}</script>
 
 <script>
 (function(){
@@ -352,7 +397,7 @@
 
   // ---------- Config ----------
   var EVENT = {y:2026, m:10, d:7};          // Nov 7 2026 (month is 0-based)
-  var START = {y:2026, m:6};                // July 2026 (0-based month)
+  var START = {y:2026, m:7};                // August 2026 (0-based month)
   var END   = {y:2026, m:10};               // Nov 2026
   var MONTH_NAMES = ["January","February","March","April","May","June","July","August","September","October","November","December"];
   var DOW = ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
@@ -723,18 +768,147 @@
     });
   }
 
-  // ---------- Publish (copy to clipboard) ----------
-  function publish(){
-    // bake current state into the embedded snapshot, then copy whole document
+  // ---------- Publish ----------
+  var GH_SETTINGS_KEY="brewcon-gh-settings", GH_TOKEN_KEY="brewcon-gh-token", GH_LASTPUB_KEY="brewcon-gh-lastpub";
+  var GH_DEFAULTS={owner:"timwilson159-commits", repo:"BrewconPlanning", branch:"main", path:"index.html"};
+
+  function fmtStamp(isoStr){
+    var d=new Date(isoStr);
+    return d.toLocaleString(undefined,{day:"numeric",month:"short",year:"numeric",hour:"numeric",minute:"2-digit"});
+  }
+  function setLastPubText(isoStr){ document.getElementById("lastPub").textContent="📤 Published "+fmtStamp(isoStr); }
+  // On load, show the stored stamp if any; otherwise keep whatever is baked into the file
+  // (so the published static copy still shows when it was last published).
+  function renderLastPub(){
+    var ts; try{ ts=localStorage.getItem(GH_LASTPUB_KEY); }catch(e){}
+    if(ts) setLastPubText(ts);
+  }
+
+  function loadGhSettings(){
+    var o={}; try{ o=JSON.parse(localStorage.getItem(GH_SETTINGS_KEY)||"{}"); }catch(e){}
+    return {
+      owner:(o.owner||GH_DEFAULTS.owner),
+      repo:(o.repo||GH_DEFAULTS.repo),
+      branch:(o.branch||GH_DEFAULTS.branch),
+      path:(o.path||GH_DEFAULTS.path)
+    };
+  }
+  function getToken(){ try{ return localStorage.getItem(GH_TOKEN_KEY)||""; }catch(e){ return ""; } }
+
+  // Build the full self-contained HTML with current data baked in.
+  // The token lives only in localStorage and is deliberately kept out of the DOM/output.
+  function buildSnapshotHTML(){
     document.getElementById("app-data").textContent = JSON.stringify(state);
-    // ensure modal/overlay is closed in the snapshot
     document.getElementById("overlay").classList.remove("on");
+    document.getElementById("settingsOverlay").classList.remove("on");
+    var t=document.getElementById("ghToken"); var keep=t.value; t.value=""; t.removeAttribute("value");
     var html = "<!DOCTYPE html>\n" + document.documentElement.outerHTML;
+    t.value=keep;
+    return html;
+  }
+
+  function toBase64(str){
+    var bytes=new TextEncoder().encode(str);
+    var bin="", chunk=0x8000;
+    for(var i=0;i<bytes.length;i+=chunk){ bin+=String.fromCharCode.apply(null, bytes.subarray(i,i+chunk)); }
+    return btoa(bin);
+  }
+
+  function ghErr(status,j){
+    var msg=(j&&j.message)?j.message:("HTTP "+status);
+    if(status===401) return "Bad token (401) — check it's valid and not expired";
+    if(status===403) return "Forbidden (403) — token lacks Contents write, or rate-limited";
+    if(status===404) return "Not found (404) — check owner/repo/branch/path and token access";
+    if(status===409) return "Conflict (409) — repo changed meanwhile; try again";
+    if(status===422) return "Rejected (422) — "+msg;
+    return msg;
+  }
+
+  function setBusy(btn,on,label){
+    if(on){ btn.classList.add("busy"); btn.innerHTML='<span class="spin">⏳</span> '+label; }
+    else { btn.classList.remove("busy"); btn.textContent=label; }
+  }
+
+  function publishToGitHub(){
+    var cfg=loadGhSettings();
+    var token=getToken();
+    if(!token || !cfg.owner || !cfg.repo || !cfg.path){
+      openSettings("Add your token and repo details first, then publish.");
+      return;
+    }
+    var btn=document.getElementById("pubBtn");
+    setBusy(btn, true, "Publishing…");
+    var prevPubText=document.getElementById("lastPub").textContent;
+    var stamp=new Date().toISOString();
+    setLastPubText(stamp);          // set before snapshot so the published file shows this time
+    var html=buildSnapshotHTML();
+    var pathEnc=cfg.path.split("/").map(encodeURIComponent).join("/");
+    var apiBase="https://api.github.com/repos/"+encodeURIComponent(cfg.owner)+"/"+encodeURIComponent(cfg.repo)+"/contents/"+pathEnc;
+    var headers={ "Authorization":"Bearer "+token, "Accept":"application/vnd.github+json", "X-GitHub-Api-Version":"2022-11-28" };
+
+    // 1) look up the current file SHA (needed to update; absent on first publish)
+    fetch(apiBase+"?ref="+encodeURIComponent(cfg.branch), {headers:headers})
+      .then(function(r){
+        if(r.status===200) return r.json();
+        if(r.status===404) return null;
+        return r.json().then(function(e){ throw new Error(ghErr(r.status,e)); });
+      })
+      .then(function(existing){
+        var body={ message:"Update BrewCon plan — "+new Date().toLocaleString(), content:toBase64(html), branch:cfg.branch };
+        if(existing && existing.sha) body.sha=existing.sha;
+        return fetch(apiBase, {method:"PUT", headers:headers, body:JSON.stringify(body)})
+          .then(function(r){ return r.json().then(function(j){ return {ok:r.ok, status:r.status, j:j}; }); });
+      })
+      .then(function(res){
+        if(res.ok){
+          try{ localStorage.setItem(GH_LASTPUB_KEY, stamp); }catch(e){}
+          toast("✅ Published to GitHub!");
+        } else throw new Error(ghErr(res.status, res.j));
+      })
+      .catch(function(err){
+        document.getElementById("lastPub").textContent=prevPubText;  // revert optimistic stamp
+        var m=err&&err.message?err.message:"Publish failed";
+        if(/Failed to fetch|NetworkError/i.test(m)) m="Network/CORS error — check connection";
+        toast("⚠ "+m);
+      })
+      .then(function(){ setBusy(btn,false,"⬆ Publish"); });
+  }
+
+  function copyPublish(){
+    var html=buildSnapshotHTML();
     copyText(html).then(function(ok){
       if(ok) toast("📋 Copied! Paste into your GitHub file & commit.");
       else fallbackCopy(html);
     });
   }
+
+  // ---------- Settings ----------
+  function openSettings(msg){
+    var cfg=loadGhSettings();
+    document.getElementById("ghOwner").value=cfg.owner;
+    document.getElementById("ghRepo").value=cfg.repo;
+    document.getElementById("ghBranch").value=cfg.branch;
+    document.getElementById("ghPath").value=cfg.path;
+    document.getElementById("ghToken").value=getToken();
+    var st=document.getElementById("settingsStatus");
+    st.textContent=msg||""; st.style.color=msg?"var(--event)":"#a99";
+    document.getElementById("settingsOverlay").classList.add("on");
+  }
+  function closeSettings(){ document.getElementById("settingsOverlay").classList.remove("on"); }
+  function saveSettings(){
+    var cfg={
+      owner:document.getElementById("ghOwner").value.trim(),
+      repo:document.getElementById("ghRepo").value.trim(),
+      branch:document.getElementById("ghBranch").value.trim()||"main",
+      path:document.getElementById("ghPath").value.trim().replace(/^\/+/,"")
+    };
+    try{ localStorage.setItem(GH_SETTINGS_KEY, JSON.stringify(cfg)); }catch(e){}
+    var token=document.getElementById("ghToken").value.trim();
+    try{ if(token) localStorage.setItem(GH_TOKEN_KEY, token); else localStorage.removeItem(GH_TOKEN_KEY); }catch(e){}
+    closeSettings();
+    toast("⚙ Settings saved");
+  }
+
   function copyText(txt){
     if(navigator.clipboard && navigator.clipboard.writeText){
       return navigator.clipboard.writeText(txt).then(function(){return true;}).catch(function(){return false;});
@@ -808,7 +982,7 @@
 
   document.getElementById("modalClose").addEventListener("click",closeModal);
   document.getElementById("overlay").addEventListener("click",function(e){ if(e.target===this) closeModal(); });
-  document.addEventListener("keydown",function(e){ if(e.key==="Escape") closeModal(); });
+  document.addEventListener("keydown",function(e){ if(e.key==="Escape"){ closeModal(); closeSettings(); } });
 
   // side panel to-do
   document.getElementById("catSeg").addEventListener("click",function(e){
@@ -825,12 +999,18 @@
   document.getElementById("todoAdd").addEventListener("click",addTodo);
   document.getElementById("todoText").addEventListener("keydown",function(e){ if(e.key==="Enter") addTodo(); });
 
-  document.getElementById("pubBtn").addEventListener("click",publish);
+  document.getElementById("pubBtn").addEventListener("click",publishToGitHub);
+  document.getElementById("copyBtn").addEventListener("click",copyPublish);
+  document.getElementById("settingsBtn").addEventListener("click",function(){ openSettings(""); });
+  document.getElementById("settingsClose").addEventListener("click",closeSettings);
+  document.getElementById("settingsSave").addEventListener("click",saveSettings);
+  document.getElementById("settingsOverlay").addEventListener("click",function(e){ if(e.target===this) closeSettings(); });
   document.getElementById("helpBtn").addEventListener("click",function(){ openModal(iso(EVENT.y,EVENT.m,1)); document.getElementById("pickBrew").click(); });
 
   // ---------- Go ----------
   initColorSelect();
   renderCountdown();
+  renderLastPub();
   renderAll();
 })();
 </script>
